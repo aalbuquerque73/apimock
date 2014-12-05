@@ -7,6 +7,22 @@
     "start": "node_modules/.bin/gulp",
     "setup": "npm install && cd js/raw-parser && npm install"
   },
+  "contributors": [
+    {
+      "name": "Americo Albuquerque",
+      "email": "americo.l.albuquerque@gmail.com",
+      "url": "http://www.aalbuquerque.com"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aalbuquerque73/apimock.git"
+  },
+  "bugs": {
+    "url": "https://github.com/aalbuquerque73/apimock/issues"
+  },
+  "homepage": "https://github.com/aalbuquerque73/apimock",
   "dependencies": {
     "body-parser": "^1.0.2",
     "config": "^1.2.0",
