@@ -1,0 +1,13 @@
+<!-- ko if: !selectedApi() -->
+<hr />
+
+<div class="whitepanel">
+    <div class="whitepane cursor-pointer">
+        <div class="wrapper even-odd"><show params="value: api, options: {value:'href'}, events: {onclick: select}"></show></div>
+    </div>
+</div>
+<!-- /ko -->
+
+<!-- ko if: selectedApi -->
+<selected-api params="value: api, selected: selectedApi, config: config"></selected-api>
+<!-- /ko -->

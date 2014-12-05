@@ -1,0 +1,14 @@
+    <hr />
+
+    <div id="routes" class="panel menu" data-bind="foreach: scenarios">
+        <div class="pane" data-bind="click: $parent.select, css: {active:$parent.active($data)}">
+            <div class="wrapper" data-bind="text: $data"></div>
+        </div>
+    </div>
+    <hr class="panel menu stand" />
+
+    <div class="whitepanel flex">
+        <div class="whitepane display-block odd-even cursor-pointer top-square" data-bind="foreach: fileList">
+            <div class="wrapper" data-bind="click: $parent.selectFile, text: name"></div>
+        </div>
+    </div>

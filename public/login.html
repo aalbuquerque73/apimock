@@ -1,0 +1,74 @@
+<!doctype html>
+
+<html>
+<head>
+<title>Login</title>
+<META HTTP-EQUIV="refresh" CONTENT="0;URL=http://www.americo.skotertech.com:8080/paddypower_plug_n_play_iphone?target=loginSuccess&i=1" />
+
+<script type="text/javascript">
+	function CookieHandler() {
+	}
+
+	CookieHandler.prototype = {
+		setCookie : function(key, value) {
+			var date = new Date();
+			date.setTime(date.getTime() + (10 * 365 * 24 * 60 * 60 * 1000));
+			document.cookie = key + "=" + value + "; expires="
+					+ date.toGMTString() + "; domain=.skotertech.com; path=/";
+		},
+
+		getCookie : function(key) {
+			var namePart = key + "=";
+			var ca = document.cookie.split(';');
+			for (var i = 0; i < ca.length; i++) {
+				var c = ca[i];
+				while (c.charAt(0) == ' ') {
+					c = c.substring(1, c.length);
+				}
+				if (c.indexOf(namePart) == 0) {
+					return c.substring(namePart.length, c.length);
+				}
+			}
+			return null;
+		},
+
+		removeCookie : function(key) {
+			document.cookie = key + "=; ; domain=.skotertech.com; path=/";
+		},
+		deleteCookie : function(key) {
+			document.cookie = key + '=;expires=Thu, 01 Jan 1970 00:00:01 GMT; ; domain=.skotertech.com';
+		},
+
+		clearCookies : function() {
+			var cookies = document.cookie.split(";");
+			for (var i = 0; i < cookies.length; i++) {
+				var eqPos = cookies[i].indexOf("=");
+				var key = eqPos > -1 ? cookies[i].substr(0, eqPos) : '';
+				this.removeCookie(key);
+			}
+		}
+	};
+</script>
+</head>
+<body>
+	Login
+	<script type="text/javascript">
+		var cookie = new CookieHandler();
+		cookie.setCookie("ac_lang", "en");
+		cookie
+				.setCookie(
+						"ac_prefs",
+						"u%3Depl_test1%7Cfirstname%3Dtest%7Clastname%3Dtest%7Cccy%3Deur%7Cregion%3Dus%7Cremember%3DN");
+		cookie.setCookie("ac_sets", "8%7C");
+		cookie
+				.setCookie(
+						"ac_tkn",
+						"bde834FSJul5KdPRlXxx0BHoMKDKXnNATFgQzpmA56AjR2IL1c3VHYqNkNjpNIj2Eqq59dOfpg%3D%3D%7C26645052");
+		cookie
+				.setCookie(
+						"PP_LOGIN",
+						"bde834FSJul5KdPRlXxx0BHoMKDKXnNATFgQzpmA56AjR2IL1c3VHYqNkNjpNIj2Eqq59dOfpg%3D%3D");
+		cookie.setCookie("cust_prefs", "26645052");
+	</script>
+</body>
+</html>

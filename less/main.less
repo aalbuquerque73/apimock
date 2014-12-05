@@ -1,0 +1,251 @@
+body {
+    display: flex;
+}
+.board() {
+    border: #000066 solid 1px;
+    border-radius: 5px;
+    padding: 3px;
+    margin-bottom: 10px;
+    
+    &:last-child {
+        margin-bottom: 0;
+    }
+}
+
+.board {
+    .board();
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+}
+.blackboard {
+    .board();
+    /*background-color: #000066;*/
+    padding: 5px;
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+}
+
+.blackboard > div {
+    background-color: white;
+}
+
+.panel() {
+    display: flex;
+    /*margin: 2px;*/
+    padding: 3px;
+    
+    &.menu .pane {
+        position: relative;
+        border-bottom-left-radius: 0;
+        border-bottom-right-radius: 0;
+        bottom: -4px;
+        cursor: pointer;
+        flex-wrap: wrap;
+    }
+    &.menu .pane.active {
+        background-color: #000066;
+        color: #ffffff;
+    }
+    &.menu.stand {
+        margin: 0;
+        padding: 0;
+        border: #000066 solid 1px;
+        width: 100%;
+        height: 1px;
+    }
+}
+
+.panel {
+    .panel();
+}
+
+.pane() {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: row;
+    margin-right: 5px;
+    
+    &:last-child {
+        margin-right: 0;
+    }
+    & > .wrapper {
+        flex: 1 1 auto;
+        padding: 1px 5px;
+    }
+    & > .wrapper .row {
+        display: flex;
+        flex-direction: row;
+    }
+    & > .wrapper .row > label {
+        display: inline-block;
+        min-width: 80px;
+    }
+    & > .wrapper .row > input[type='text'] {
+        flex: 1 1 auto;
+    }
+    
+    hr {
+        border-color: #000066;
+        border-style: solid;
+    }
+}
+
+.pane {
+    .pane();
+    border: #000066 solid 1px;
+    border-radius: 3px;
+}
+
+.whitepanel {
+    .panel();
+    padding: 0;
+}
+
+.whitepane {
+    .pane();
+    overflow: hidden;
+}
+
+.whitepanel-with-title {
+    padding: 1em 0 .5em;
+    
+    .title {
+        position: relative;
+        left: -5px;
+        background-color: #000066;
+        color: #FFFFFF;
+        font-weight: bold;
+        padding: 5px 5px 5px 1em;
+        margin-right: 7px;
+        margin-bottom: .5em;
+        border-top-right-radius: 5px;
+        border-bottom-right-radius: 5px;
+        
+        .item {
+            position: relative;
+            bottom: 0px;
+            padding: 3px 5px;
+            border-top-left-radius: 3px;
+            border-top-right-radius: 3px;
+            cursor: pointer;
+            
+            &.selected {
+                background-color: white;
+                color: #000066;
+            }
+        }
+    }
+}
+
+.even-odd div.row:nth-child(2n) {
+    background-color: rgba(191,191,191, .5);
+}
+
+.odd-even div.row:nth-child(2n+1) {
+    background-color: rgba(191,191,191, .5);
+}
+
+input[type='text'] {
+    border: #000066 solid 1px;
+    background-color: rgba(255,255,127, .25);
+    padding: 1px 3px;
+}
+
+input[readonly] {
+    background-color: transparent;
+}
+
+.cursor-pointer, .cursor-pointer * {
+    cursor: pointer;
+}
+
+.display-block {
+    display: block;
+}
+
+.flex {
+    display: flex;
+    flex: 1 1 auto;
+}
+
+.no-flex {
+    flex: none;
+}
+
+.popup-holder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.popup {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    margin: 10% 10%;
+    padding: 5px;
+    width: 80%;
+    height: 80%;
+    background-color: white;
+    border: #000066 solid 1px;
+    border-radius: 5px;
+    z-index: 2;
+    
+    .panel {
+        flex: 1 1 auto;
+        display: block;
+        position: relative;
+        height: 53%;
+        
+        textarea {
+            width: 100%;
+            height: 100%;
+        }
+    }
+    .panel.one {
+        height: auto;
+    }
+    textarea {
+        flex: 1 1 auto;
+    }
+}
+
+.toolbar {
+    display: flex;
+    text-align: right;
+    padding: 3px 0 0;
+    
+    input[type='text'] {
+        flex: 1 1 auto;
+    }
+}
+.panel.toolbar {
+    margin-right: 3px;
+}
+.whitepanel.toolbar {
+    margin-right: 5px;
+}
+.whitepane.toolbar {
+    margin-right: 10px;
+}
+.top-left-square {
+    border-top-left-radius: initial;
+}
+.top-right-square {
+    border-top-right-radius: initial;
+}
+.top-square {
+    &:extend(.top-left-square);
+    &:extend(.top-right-square);
+}
+
+.button {
+    display: inline-block;
+    padding: 3px;
+    border: #000066 solid 1px;
+    border-radius: 5px;
+}

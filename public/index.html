@@ -1,0 +1,43 @@
+<html>
+    <head>
+        <title>API Mock Data</title>
+        <link rel="stylesheet" href="styles/main.css" />
+		<link rel="stylesheet" href="styles/codemirror.css" />
+
+        <script data-main="scripts/main.js" src="scripts/lib/require-2.1.11.js"></script>
+    </head>
+    
+    <body>
+        <div id="board" class="board">
+            <popup params="value: popup"></popup>
+            
+            <div id="setup" class="panel">
+                <div id="app" class="pane">
+                    <div class="wrapper"><show params="value: app"></show></div>
+                </div>
+                <div id="server">
+                    <div class="pane">
+                        <div class="wrapper"><edit params="value: server"></edit></div>
+                    </div>
+                    <div class="panel toolbar">
+                        <button class="button" data-bind="save: server, action: 'server'">Save</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="blackboard" class="blackboard">
+                <div id="routes" class="panel menu" data-bind="foreach: routes">
+                    <div class="pane" data-bind="click: $root.select, css: {active:$root.active($data)}">
+                        <div class="wrapper" data-bind="text: config"></div>
+                    </div>
+                </div>
+                <hr class="panel menu stand" />
+
+                <!-- ko if: selectedRoute -->
+                <route params="value: selectedRoute"></route>
+                <!-- /ko -->
+                
+            </div>
+        </div>
+    </body>
+</html>
