@@ -23,6 +23,9 @@
     "url": "https://github.com/aalbuquerque73/apimock/issues"
   },
   "homepage": "https://github.com/aalbuquerque73/apimock",
+  "scripts": {
+    "test": "mocha test/**/*.js"
+  },
   "dependencies": {
     "body-parser": "^1.0.2",
     "config": "^1.2.0",
@@ -45,6 +48,8 @@
   "devDependencies": {
     "gulp": "^3.8.8",
     "gulp-less": "^1.3.6",
-    "mocha": "^1.21.4"
+    "mocha": "^1.21.4",
+    "sinon": "^1.12.2",
+    "chai": "^1.10.0"
   }
 }
