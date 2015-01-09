@@ -4,9 +4,7 @@ var assert = require('chai').assert,
     sinon = require('sinon'),
     gatherFiles = require('../../../../js/api/domain/gather-files');
 
-var util = require('util');
-
-describe('gather-files', function() {
+describe('api/domain/gather-files', function() {
     
     afterEach(function() {
         stub.restore();    
@@ -16,7 +14,7 @@ describe('gather-files', function() {
         stub = sinon.stub(glob, "sync", function() {return files.sort()});
         return gatherFiles(path.normalize(dir), options || {});    
     };
-        
+    
     it('should return all the files if there is not a matching filename', function() {
         var expected = [
             {"name":"a.js","file":"a.js"},
