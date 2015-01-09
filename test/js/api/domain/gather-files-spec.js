@@ -4,9 +4,7 @@ var assert = require('chai').assert,
     sinon = require('sinon'),
     gatherFiles = require('../../../../js/api/domain/gather-files');
 
-var util = require('util');
-
-describe('gather-files', function() {
+describe('api/domain/gather-files', function() {
     
     afterEach(function() {
         stub.restore();    
