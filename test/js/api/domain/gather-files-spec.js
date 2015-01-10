@@ -7,7 +7,7 @@ var assert = require('chai').assert,
 describe('api/domain/gather-files', function() {
     
     afterEach(function() {
-        stub.restore();    
+        if(stub) stub.restore();   
     });
     
     var getFiles = function(dir, files, options) {        

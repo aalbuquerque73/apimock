@@ -2,8 +2,8 @@ var assert = require('chai').assert,
     path = require('path'),
     fs = require('fs'),
     sinon = require('sinon'), 
-    httpMocks = require('node-mocks-http'),
-    logger = require('../../../../../js/logger');    
+    testUtil = require('../../../../test-util')(),
+    logger = require('../../../../../js/logger'),    
     file = require('../../../../../js/api/domain/post/file');    
 
 describe('api/domain/post/file', function() {
@@ -16,16 +16,12 @@ describe('api/domain/post/file', function() {
         }            
     });    
     
-    var getResponse = function() {
-        return httpMocks.createResponse({encoding: 'utf8'});
+    var httpRes = function() {
+        return testUtil.mockHttpRes();
     };
     
-    var getRequest = function(name, file) {
-        return httpMocks.createRequest({
-                    method: 'POST',
-                    url: '/test',
-                    body:  {api: 'test', name: name, file: file}
-                });    
+    var httpReq = function(filename) {
+        return testUtil.mockHttpReq('test_req', filename || 'request_0');
     }; 
     
     var respond = function(req, res, content, options) {
@@ -59,10 +55,9 @@ describe('api/domain/post/file', function() {
     
     it('should send both the request and the response if both of them were captured', function() {
         
-        var res = getResponse(),
-            req = getRequest('test_req', 'request_0');
+        var res = httpRes();
         
-        respond(req, res, 'test content');
+        respond(httpReq(), res, 'test content');
         
         var expected = {  
            file1:{  
@@ -83,10 +78,9 @@ describe('api/domain/post/file', function() {
     
     it('should send a captured request', function() {
         
-        var res = getResponse(),
-            req = getRequest('test_req', 'no_match');
+        var res = httpRes();
         
-        respond(req, res, 'test content');
+        respond(httpReq('no_match'), res, 'test content');
         
         var expected = {  
            file1:{  
@@ -102,10 +96,9 @@ describe('api/domain/post/file', function() {
 
     it('should send a captured response', function() {
         
-        var res = getResponse(),
-            req = getRequest('test_req', 'request_0');
+        var res = httpRes();
         
-        respond(req, res, 'test content', {matcher: 'res-only'});
+        respond(httpReq(), res, 'test content', {matcher: 'res-only'});
         
         var expected = {  
            file2:{  
@@ -121,10 +114,9 @@ describe('api/domain/post/file', function() {
     
     it('should send the response as JSON', function() {
         
-        var res = getResponse(),
-            req = getRequest('test_req', 'request_0');
+        var res = httpRes();
         
-        respond(req, res, 'test content');
+        respond(httpReq(), res, 'test content');
                         
         assert(res._isJSON(), 'Response doesn\'t seem to be JSONized!');                        
     });    
