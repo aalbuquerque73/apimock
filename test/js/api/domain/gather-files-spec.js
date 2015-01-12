@@ -1,4 +1,5 @@
 var assert = require('chai').assert,
+    _ = require('underscore'),
     path = require('path'),
     glob = require('glob'),
     sinon = require('sinon'),
@@ -6,55 +7,59 @@ var assert = require('chai').assert,
 
 var util = require('util');
 
-describe('gather-files', function() {
+describe('api/domain/gather-files', function() {
     
     afterEach(function() {
-        stub.restore();    
+        if(stub) stub.restore();   
     });
     
-    var getFiles = function(dir, files, options) {        
-        stub = sinon.stub(glob, "sync", function() {return files.sort()});
-        return gatherFiles(path.normalize(dir), options || {});    
+    var fakePath = '/fake/path';
+    
+    var _getFiles = function(filenames) {
+        return _.map(filenames, function(filename) {return path.join(fakePath, filename);});
     };
-        
-    it('should return all the files if there is not a matching filename', function() {
-        var expected = [
-            {"name":"a.js","file":"a.js"},
-            {"name":"b.js","file":"b.js"},
-            {"name":"c.js","file":"c.js"}];
-        
-        var actual = getFiles('/fake/dir', ['a.js', 'b.js', 'c.js']);
-        assert.deepEqual(actual, expected);
-    });
+    
+    var _expected = function(filenames) {
+        return _.map(filenames, function(filename) {
+            return {name: filename, file: path.join(fakePath, filename)};
+        });
+    }
+    
+    var _test = function(files, options) {     
+        stub = sinon.stub(glob, "sync", function() {return files.sort();});
+        return gatherFiles(path.normalize(fakePath), options || {});    
+    };
 
-    it('should return only the files whose name won\'t match the pattern', function() {
-        var expected = [{"name":"a.js","file":"a.js"}, {"name":"c.js","file":"c.js"}];        
-        var actual = getFiles('/fake/dir', ['a.js', 'c.js', 'response_b.js']);
-        assert.deepEqual(actual, expected);
+    it('should recognize responses as files starting with \'response_\' by default', function() {
+        assert.deepEqual(
+            _test(_getFiles(['request_a', 'response_a', 'request_b', 'res_b'])), 
+            _expected(['request_a', 'request_b', 'res_b']));
 
     });    
     
-    it('shouldn\'t return anything if all of the files match the pattern', function() {
-        var actual = getFiles('/fake/dir', ['response_a.js', 'response_b.js']);
-        assert.deepEqual(actual, []);
-    });    
-
-    it('should respect the provided response pattern', function() {
-        var expected = [
-            {"name":"a.xml","file":"a.xml"},
-            {"name":"c.txt","file":"c.txt"}]; 
-        
-        var actual = getFiles('/fake/dir', ['a.xml', 'b.js', 'c.txt'], 
-                              {patterns: {response: 'b'}});
-        assert.deepEqual(actual, expected);
-    });    
-    
-    it('should use a default value of \'_response\' if no response pattern is provided', function() {
-        var expected = [{"name":"c.js","file":"c.js"}];        
-        var actual = getFiles('/fake/dir', ['response_a.js', 'c.js', 'response_b.js']);
-        assert.deepEqual(actual, expected);
+    it('should only return saved requests by default', function() {
+        assert.deepEqual(
+            _test(_getFiles(['request_a', 'response_a', 'request_b', 'response_b'])), 
+            _expected(['request_a', 'request_b']));
 
     });    
     
+    it('shouldn\'t return anything if there are only saved responses available, by default', function() {
+        assert.deepEqual(_test(['response_a', 'response_b']), []);
+    });    
+
+    it('should be possible to override the default response pattern', function() {
+        assert.deepEqual(
+            _test(_getFiles(['request_a1', 'response_a1', 'request_a2', 'response_a2', 'request_b', 'response_b']),
+                  {patterns: {response: 'response_a'}}), 
+            _expected(['request_a1', 'request_a2', 'request_b', 'response_b']));
+    });            
+
+    it('should be possible to flip the response pattern to filter out requests instead of responses', function() {
+        assert.deepEqual(
+            _test(_getFiles(['request_a', 'response_a', 'request_b', 'response_b', 'request_c', 'response_c']),
+                  {patterns: {response: 'request_'}}), 
+            _expected(['response_a', 'response_b', 'response_c']));
+    });            
     
 });
