@@ -27,6 +27,7 @@ module.exports = function(req, res, Config) {
         },
         saving: false
     };
+    
     if (Config.options && Config.options.debug) {
         if (typeof Config.options.debug.found === 'boolean') {
             debug.found = Config.options.debug.found;

@@ -15,7 +15,10 @@ module.exports = function(options, Config) {
     
     if (Config.api.hasOwnProperty(method)) {
         var apiConfig = Config.api[method];
-        var filename = api + '(' + _.map(options.query, querify).join(',') + ')' + apiConfig.extension;
+        var filename = api + apiConfig.extension;
+        if (Object.keys(options.query).length > 0 ) {
+            filename = api + '(' + _.map(options.query, querify).join(',') + ')' + apiConfig.extension;
+        }
         var file = path.resolve(CONFIG.app.root, 'data', apiConfig.source, filename);
         
         return file;
