@@ -21,6 +21,7 @@ function(_, ko, mq, U, domain) {
     }
     
     function ViewModel(params) {
+        console.group('api:selected:filelist:ViewModel');
         var filelist = ko.utils.unwrapObservable(params.value);
         
         console.log('[api:selected:filelist:ViewModel]', filelist);
@@ -32,16 +33,19 @@ function(_, ko, mq, U, domain) {
         var model = this;
         
         this.select = function(selected) {
+            console.group('api:selected:filelist:ViewModel');
             console.log('[api:selected:filelist:ViewModel:select]', selected);
             model.scenario(selected);
             model.fileList(observablisate(filelist[selected]));
+            console.groupEnd();
         };
         
         this.selectFile = function(selected) {
+            console.group('api:selected:filelist:ViewModel');
             console.log('[api:selected:filelist:ViewModel:select]', selected);
             selected.config = filelist.config.config;
             selected.api = filelist.config.api;
-            selected.rename = function(data) {
+            /*selected.rename = function(data) {
                 if (data) {
                     var index = filelist[model.scenario()].indexOf(selected);
                     console.log('[api:selected:filelist:ViewModel:selectFile]', index, selected, data);
@@ -56,25 +60,55 @@ function(_, ko, mq, U, domain) {
                         }
                     });
                 }
-            };
+            };*/
             mq.publish('popup', selected);
+            console.groupEnd();
         };
         
         this.active = function(selected) {
+            console.group('api:selected:filelist:ViewModel');
             console.log('[api:selected:filelist:ViewModel:active]', selected, model.scenario());
+            console.groupEnd();
             return (selected === model.scenario());
         };
         
         var subscription = params.value.subscribe(function(filelist) {
+            console.group('api:selected:filelist:ViewModel');
+            console.log('[api:selected:filelist:ViewModel:value]', filelist);
             this.scenarios(filelist.scenarios);
             this.scenario(filelist.scenarios[Object.keys(filelist.scenarios)[0]]);
             this.fileList(filelist[this.scenario()]);
+            console.groupEnd();
         });
         
+        var renameSubscription = mq.subscribe('ServerEvent:rename', function(message) {
+            console.group('api:selected:filelist:ViewModel');
+            _.map(message, function(item) {
+                console.group('api:selected:filelist:ViewModel:ServerEvent:rename');
+                console.log('[api:selected:filelist:ViewModel:ServerEvent:rename.map]', item, this.fileList());
+                _.chain(this.fileList())
+                    .filter(function(test) {
+                        var unwraped = ko.utils.unwrapObservable(test());
+                        return unwraped.file === item.new;
+                    }, this)
+                    .map(function(item) {
+                        var unwraped = ko.utils.unwrapObservable(item());
+                        console.log('[api:selected:filelist:ViewModel:ServerEvent:rename.map.map]', this.scenario(), unwraped);
+                        item.valueHasMutated();
+                    }, this);
+                console.groupEnd();
+            }, this);
+            console.groupEnd();
+        }, this);
+        
         this.dispose = function() {
+            console.group('api:selected:filelist:ViewModel');
             console.log('[api:selected:filelist:ViewModel:dispose]');
             subscription.dispose();
+            renameSubscription.dispose();
+            console.groupEnd();
         };
+        console.groupEnd();
     }
     ViewModel.prototype = {};
     

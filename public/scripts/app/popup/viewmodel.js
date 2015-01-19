@@ -113,13 +113,15 @@ function($, _, ko, domain, mq, CodeMirror) {
         this.file2 = new FileModel();
         
         this.basename = ko.observable();
+        this.originalBasename = '';
         
         this.single = ko.pureComputed(function() {
             return this.show() ? "two" : "one";
         }, this.file2);
         
         var subscription = params.value.subscribe(function(value) {
-            console.log('[popup:ViewModel]', value, this);
+            console.group('popup:ViewModel:value');
+            console.log('[popup:ViewModel] new value', value, this);
             if (value.data.file2) {
                 model.file2.set(value.data.file2);
             }
@@ -129,19 +131,53 @@ function($, _, ko, domain, mq, CodeMirror) {
             }
             if (value.data.basename) {
                 model.basename(value.data.basename);
+                model.originalBasename = value.data.basename;
             }
-            
-            model.rename = function() {
-                console.log('[popup:ViewModel:rename]', model.basename(), value);
-                value.data.newBasename = model.basename();
-                if (typeof value.config.rename === 'function') {
-                    value.config.rename(value.data);
-                }
-            };
+            console.groupEnd();
         });
         
         this.rename = function(model) {
+            console.group('popup:ViewModel:rename');
             console.log('[popup:ViewModel:rename]', model);
+            var data = {
+                basename: model.originalBasename,
+                newBasename: model.basename()
+            };
+            if (model.file1.show()) {
+                data.file1 = model.file1.toJson();
+            }
+            if (model.file2.show()) {
+                data.file2 = model.file2.toJson();
+            }
+            domain.rename(data, function(status, data) {
+                console.group('popup:ViewModel:domain.rename');
+                if (status === 'OK') {
+                    console.log('[popup:ViewModel:rename]', data);
+                    var eventList = [];
+                    model.originalBasename = model.basename();
+                    if (data.file1) {
+                        eventList.push({
+                            name: data.file1.name,
+                            new: data.file1.href,
+                            old: model.file1.href()
+                        });
+                        model.file1.set(data.file1);
+                    }
+                    if (data.file2) {
+                        eventList.push({
+                            name: data.file2.name,
+                            new: data.file2.href,
+                            old: model.file2.href()
+                        });
+                        model.file2.set(data.file2);
+                    }
+                    if (eventList.length > 0) {
+                        mq.publish('ServerEvent:rename', eventList);
+                    }
+                }
+                console.groupEnd();
+            });
+            console.groupEnd();
         };
         
         this.save = function(model) {
@@ -163,7 +199,6 @@ function($, _, ko, domain, mq, CodeMirror) {
         save: function () {
             console.log('[popup:ViewModel:save', arguments);
             this.show(false);
-            //TODO: save changes
         },
         
         close: function () {

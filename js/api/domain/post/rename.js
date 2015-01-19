@@ -11,16 +11,22 @@ module.exports = function(req, res) {
     //CONFIG.util.logger.info('[domain:post] rename', req.query, req.body);
 
     var config = req.body;
+    //CONFIG.util.logger.info('[domain:post] rename', config);
     if (config.basename && config.newBasename) {
+        //CONFIG.util.logger.info('[domain:post] rename.basename', config.file1);
         if (config.file1) {
             var file = path.join(path.dirname(config.file1.href), config.file1.name.replace(config.basename, config.newBasename));
+            //CONFIG.util.logger.info('[domain:post] rename', file);
             if (!fs.existsSync(file)) {
                 var eventList = [];
                 
+                //CONFIG.util.logger.info('[domain:post] rename', config.file1.href, file);
                 fs.renameSync(config.file1.href, file);
+                
                 eventList.push({
                     old: config.file1.href,
-                    'new': file
+                    'new': file,
+                    name: path.basename(file)
                 });
                 
                 CONFIG.util.logger.info('[domain:post] rename', file);
@@ -32,7 +38,8 @@ module.exports = function(req, res) {
                     fs.renameSync(config.file2.href, file);
                     eventList.push({
                         old: config.file2.href,
-                        'new': file
+                        'new': file,
+                        name: path.basename(file)
                     });
                     CONFIG.util.logger.info('[domain:post] rename', file);
                     config.file2.href = file;

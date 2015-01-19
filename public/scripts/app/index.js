@@ -34,20 +34,24 @@ function($, _, ko, U, MQ, domain, ViewModel) {
     
     var source = new EventSource('/api/events');
     source.addEventListener('new', function(message) {
-        console.log('[EventSource:new]', arguments);
-        MQ.publish('ServerEvent:new', JSON.parse(message.data));
+        var data = JSON.parse(message.data);
+        console.log('[EventSource:new]', data);
+        MQ.publish('ServerEvent:new', data);
     }, false);
     source.addEventListener('change', function(message) {
-        console.log('[EventSource:change]', arguments);
-        MQ.publish('ServerEvent:change', JSON.parse(message.data));
+        var data = JSON.parse(message.data);
+        console.log('[EventSource:change]', data);
+        MQ.publish('ServerEvent:change', data);
     }, false);
     source.addEventListener('remove', function(message) {
-        console.log('[EventSource:remove]', arguments);
-        MQ.publish('ServerEvent:remove', JSON.parse(message.data));
+        var data = JSON.parse(message.data);
+        console.log('[EventSource:remove]', data);
+        MQ.publish('ServerEvent:remove', data);
     }, false);
     source.addEventListener('rename', function(message) {
-        console.log('[EventSource:rename]', arguments);
-        MQ.publish('ServerEvent:rename', JSON.parse(message.data));
+        var data = JSON.parse(message.data);
+        console.log('[EventSource:rename]', data);
+        //MQ.publish('ServerEvent:rename', data);
     }, false);
     
     return {

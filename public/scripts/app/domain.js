@@ -58,7 +58,7 @@ function($, _) {
             $.post('/api/domain?action=rename', params)
             .done(function (data) {
                 console.log('[domain:rename:post]', data);
-                callback && callback(data);
+                callback && callback.apply(null, data);
             })
             .fail(function() {
                 console.log('[domain:rename:post] Error:', arguments);

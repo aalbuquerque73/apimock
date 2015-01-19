@@ -54,9 +54,30 @@ function(_, ko, domain, mq) {
             mq.publish('popup', file);
         };
         
+        var renameSubscription = mq.subscribe('ServerEvent:rename', function(message) {
+            console.log('[api:selected:ViewModel:ServerEvent:rename]', message, this);
+            _.map(this.fileList(), function(item) {
+                if (Array.isArray(item)) {
+                    console.log('[api:selected:ViewModel:ServerEvent:rename.map]', item);
+                    _.chain(item)
+                        .filter(function(item) {
+                            console.log('[api:selected:ViewModel:ServerEvent:rename.map.filter]', item);
+                            return _.find(message, function(test) { console.log('[api:selected:ViewModel:ServerEvent:rename.map.filter.find]', test);return test.old === item.file; });
+                        })
+                        .map(function(item) {
+                            console.log('[api:selected:ViewModel:ServerEvent:rename.map.map]', item);
+                            var newFile = _.find(message, function(test) { console.log('[api:selected:ViewModel:ServerEvent:rename.map.map.find]', test);return test.old === item.file; });
+                            item.file = newFile.new;
+                            item.name = newFile.name;
+                        }, this);
+                }
+            }, this);
+        }, this);
+        
         this.dispose = function() {
             console.log('[api:selected:ViewModel:dispose]', arguments);
             subscription.dispose();
+            renameSubscription.dispose();
             _.each(this.menu(), function(item) {
                 item.selected.dispose();
             });
