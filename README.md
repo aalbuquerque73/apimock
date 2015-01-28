@@ -1,5 +1,6 @@
 apimock
 =======
+[![Build Status](https://travis-ci.org/zezutom/apimock-1.svg?branch=develop)](https://travis-ci.org/zezutom/apimock-1)
 
 Data Mock proxy
 
