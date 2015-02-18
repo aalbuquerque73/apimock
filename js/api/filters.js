@@ -16,22 +16,21 @@ var filters = {
     newline: function (data) { return data.replace(/\r?\n/g, ' '); },
     
     xml: {
-        format: function (data) { return pd.xml(data, true); },
-        whitespace: function (data) { return pd.xmlmin(data, true); },
-        comments: function (data) { return pd.xml(data); },
+        format: function (data) { return pd.xml(data); },
+        whitespace: function (data) { return pd.xmlmin(data); },
+        comments: function (data) { return pd.xmlmin(data, true); },
         all: function (data) { return pd.xmlmin(data); }
     },
     json: {
-        format: function (data) { return pd.json(data, true); },
-        whitespace: function (data) { return pd.jsonmin(data, true); },
-        comments: function (data) { return pd.json(data); },
-        all: function (data) { return pd.xmlmin(data); }
+        format: function (data) { return pd.json(data); },
+        whitespace: function (data) { return pd.jsonmin(data); },
+        all: function (data) { return pd.jsonmin(data); }
     },
     css: {
-        format: function (data) { return pd.css(data, true); },
-        whitespace: function (data) { return pd.cssmin(data, true); },
-        comments: function (data) { return pd.css(data); },
-        all: function (data) { return pd.xmlmin(data); }
+        format: function (data) { return pd.css(data); },
+        whitespace: function (data) { return pd.cssmin(data); },
+        comments: function (data) { return pd.cssmin(data, true); },
+        all: function (data) { return pd.cssmin(data); }
     }
 };
 
