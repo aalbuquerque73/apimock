@@ -29,7 +29,7 @@ describe('api/filters', function() {
         return filters.apply(original, workflow);
     }
 
-    it('xml.format should pretty-print an xml document', function() {
+    it('xml.format should pretty-print an xml document and preserve comments', function() {
         const expected =
             '<a>\n' +
             '  <b>\n' +
@@ -41,17 +41,24 @@ describe('api/filters', function() {
         assert.equal(expected, filterXml(['xml.format']));
     });
 
-    it('xml.whitespace should minify an xml document and remove comments', function() {
-        const expected = '<a><b><c>zz  xxx zz</c><d/></b></a>';
+    it('xml.whitespace should minify an xml document and preserve comments', function() {
+        const expected = '<a><b><c>zz  xxx zz</c><!-- comment --><d/></b></a>';
         assert.equal(expected, filterXml(['xml.whitespace']));
     });
 
-    it('xml.comments should minify an xml document and preserve comments', function() {
-        const expected = '<a><b><c>zz  xxx zz</c><!-- comment --><d/></b></a>';
+    it('xml.comments should pretty-print an xml document and preserve comments', function() {
+        const expected =
+            '<a>\n' +
+            '  <b>\n' +
+            '    <c>zz  xxx zz</c>\n' +
+            '    <!-- comment -->\n' +
+            '    <d/>\n' +
+            '  </b>\n' +
+            '</a>';
         assert.equal(expected, filterXml(['xml.comments']));
     });
 
-    it('xml.all should do the same thing as xml.whitespace (TODO is this needed?)', function() {
+    it('xml.all should minify an xml document and remove comments', function() {
         const expected = '<a><b><c>zz  xxx zz</c><d/></b></a>';
         assert.equal(expected, filterXml(['xml.all']));
     });
@@ -83,7 +90,6 @@ describe('api/filters', function() {
             '    }\n' +
             '  }\n' +
             '}';
-
         assert.equal(expected, filterJson(['json.format']));
     });
 
@@ -92,21 +98,49 @@ describe('api/filters', function() {
             '{"menu":{"id":"file","value":[1,2,3],' +
             '"popup":{"menuitem":[{"value":["one","two"],' +
             '"onclick":"CreateNewDoc()"},{"value":"Close","onclick":"CloseDoc()"}]}}}';
-
         assert.equal(expected, filterJson(['json.whitespace']));
     });
 
-    it('json.all should do the same thing as json.whitespace (TODO is this needed?)', function() {
+    it('json.comments should pretty-print a json string', function() {
+        const expected =
+            '{\n' +
+            '  "menu": {\n' +
+            '    "id": "file",\n' +
+            '    "value": [\n' +
+            '      1,\n' +
+            '      2,\n' +
+            '      3\n' +
+            '    ],\n' +
+            '    "popup": {\n' +
+            '      "menuitem": [\n' +
+            '        {\n' +
+            '          "value": [\n' +
+            '            "one",\n' +
+            '            "two"\n' +
+            '          ],\n' +
+            '          "onclick": "CreateNewDoc()"\n' +
+            '        },\n' +
+            '        {\n' +
+            '          "value": "Close",\n' +
+            '          "onclick": "CloseDoc()"\n' +
+            '        }\n' +
+            '      ]\n' +
+            '    }\n' +
+            '  }\n' +
+            '}';
+        assert.equal(expected, filterJson(['json.comments']));
+    });
+
+    it('json.all should minify a json string', function() {
         const expected =
             '{"menu":{"id":"file","value":[1,2,3],' +
             '"popup":{"menuitem":[{"value":["one","two"],' +
             '"onclick":"CreateNewDoc()"},{"value":"Close","onclick":"CloseDoc()"}]}}}';
-
         assert.equal(expected, filterJson(['json.all']));
     });
 
 
-    it('css.format should pretty-print a css string', function() {
+    it('css.format should pretty-print a css string and preserve comments', function() {
         const expected =
             '.headbg{\n' +
             '  margin:0 8px;\n' +
@@ -122,17 +156,33 @@ describe('api/filters', function() {
         assert.equal(expected, filterCss(['css.format']));
     });
 
-    it('css.whitespace should minify a css string and remove comments', function() {
+    it('css.whitespace should minify a css string and preserve comments', function() {
+        const expected =
+            '.headbg{margin:0 8px;display:none;}a:link,a:focus{color:#00c }/*comment */a:active{color:red }';
+        assert.equal(expected, filterCss(['css.whitespace']));
+    });
+
+    it('css.comments should pretty-print a css string and preserve comments', function() {
+        const expected =
+            '.headbg{\n' +
+            '  margin:0 8px;\n' +
+            '  display:none;\n' +
+            '}\n' +
+            'a:link,a:focus{\n' +
+            '   color:#00c \n' +
+            '}\n' +
+            '/* comment */\n ' +
+            'a:active{\n' +
+            '   color:red \n' +
+            '}\n';
+
+        assert.equal(expected, filterCss(['css.comments']));
+    });
+
+    it('css.all should minify a css string and remove comments', function() {
         const expected =
             '.headbg{margin:0 8px;display:none;}a:link,a:focus{color:#00c }a:active{color:red }';
 
-        assert.equal(filterCss(['css.whitespace']), expected);
-    });
-
-    it('css.comments should minify a css string and preserve comments', function() {
-        const expected =
-            '.headbg{margin:0 8px;display:none;}a:link,a:focus{color:#00c }/*comment */a:active{color:red }';
-
-        assert.equal(expected, filterCss(['css.comments']));
+        assert.equal(expected, filterCss(['css.all']));
     });
 });
