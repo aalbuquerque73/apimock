@@ -5,7 +5,7 @@ describe('api/filters', function() {
 
     var filterXml = function(workflow) {
         // courtesy http://www.eslinstructor.net/pretty-data/img/pd_xml.png
-        var original =
+        const original =
             '<a>  <b>   <c>zz  xxx zz</c>\n' +
             '<!-- comment --> <d/>\n' +
             '</b></a>';
@@ -14,7 +14,7 @@ describe('api/filters', function() {
 
     var filterJson = function(workflow) {
         // courtesy http://www.eslinstructor.net/pretty-data/img/pd_json.png
-        var original =
+        const original =
             '{"menu":{"id": "file","value":\n[1,2,3],\n' +
             '"popup":{"menuitem":[{"value":    ["one","two"],\n' +
             '"onclick":"CreateNewDoc()"},{"value":"Close","onclick":"CloseDoc()"}]}}}';
@@ -23,7 +23,7 @@ describe('api/filters', function() {
 
     var filterCss = function(workflow) {
         // courtesy http://www.eslinstructor.net/pretty-data/img/pd_css.png
-        var original =
+        const original =
             '.headbg{margin:0 8px;display:none; }a:link,a:focus{   color:#00c }\n' +
             '  /* comment */ a:active{    color:red }';
         return filters.apply(original, workflow);
@@ -184,5 +184,39 @@ describe('api/filters', function() {
             '.headbg{margin:0 8px;display:none;}a:link,a:focus{color:#00c }a:active{color:red }';
 
         assert.equal(expected, filterCss(['css.all']));
+    });
+
+    it('should escape special characters', function() {
+        const actual = 'stra$nge?name*for.a.fi*le',
+            expected = 'stra\\$nge\\?name\\*for\\.a\\.fi\\*le';
+        assert.equal(expected, filters.apply(actual, ['escape']));
+    });
+
+    //it('TODO: regexp - how is it used?', function() {});
+
+    it('should replace line breaks with spaces', function() {
+        const orig = filterXml(['xml.format']),    // pretty-prints, i.e. creates line breaks
+            expected =                            // xml remains formatted, hence the extra spaces
+                '<a>   <b>     <c>zz  xxx zz</c>     <!-- comment -->     <d/>   </b> </a>';
+        assert.equal(expected, filters.apply(orig, ['newline']) );
+    });
+
+    it('should be possible to apply multiple filters', function() {
+        const original =            // a poorly formatted xml with an outstanding number of line breaks
+            '<a>\n\n<b>\n   <c>zz  \nxxx zz</c>\n' +
+            '<!-- \ncomment\n --> <d/>\n' +
+            '</b></a>',
+                                    // a nicely formatted output with minimum line breaks
+            expected = '<a>\n  <b>\n    <c>zz   xxx zz</c>\n    <!--  comment  -->\n    <d/>\n  </b>\n</a>';
+        assert.equal(expected, filters.apply(original, ['newline', 'xml.format']));
+    });
+
+    it('should respect filter ordering', function() {
+        const original =            // a poorly formatted css with comments and an outstanding number of line breaks
+            '.headbg{margin:0 8px;display:none; }a:link,a:focus{   color:#00c }\n' +
+            '  /* comment */ a:active{    color:red }',
+                                    // an one-liner without any comments
+            expected = '.headbg{   margin:0 8px;   display:none; } a:link,a:focus{   color:#00c  } a:active{   color:red  } ';
+        assert.equal(expected, filters.apply(original, ['css.all', 'css.format', 'newline']));
     });
 });
