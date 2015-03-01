@@ -61,4 +61,10 @@ describe('api/parser', function() {
         assert.equal(original, parser.apply('text/css', original));
     });
 
+    it('should check if the parser module supports the provided mime type', function() {
+        assert.isTrue(parser.has('text/xml'));
+        assert.isTrue(parser.has('application/json'));
+        assert.isTrue(parser.has('text/css'));
+        assert.isFalse(parser.has('text/csv'));
+    });
 });

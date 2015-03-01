@@ -192,7 +192,11 @@ describe('api/filters', function() {
         assert.equal(expected, filters.apply(actual, ['escape']));
     });
 
-    //it('TODO: regexp - how is it used?', function() {});
+    it('regexp should revert the escape filter on the text between two \'&rx;\'', function() {
+        const orig = '<auth><token>&rx;\\d+&rx;</token></auth>',
+            expected = '<auth><token>\\d+</token></auth>';
+        assert.equal(expected, filters.apply(orig, ['escape', 'regexp']));
+    })
 
     it('should replace line breaks with spaces', function() {
         const orig = filterXml(['xml.format']),    // pretty-prints, i.e. creates line breaks

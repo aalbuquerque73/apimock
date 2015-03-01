@@ -1,6 +1,7 @@
 var assert = require('chai').assert,
     handlers = require('../../../js/api/handlers');
 
+util = require('util')
 describe('api/handlers', function() {
 
     // poorly formatted input with outstanding line breaks
@@ -77,4 +78,10 @@ describe('api/handlers', function() {
         assert.equal(expected, handlers.apply('text/css', css));
     });
 
+    it('should check if the handler module supports the provided mime type', function() {
+        assert.isTrue(handlers.has('text/xml'));
+        assert.isTrue(handlers.has('application/json'));
+        assert.isTrue(handlers.has('text/css'));
+        assert.isFalse(handlers.has('text/csv'));
+    });
 });
