@@ -1,8 +1,0 @@
-{
-  "name": "raw-parser",
-  "description": "Connect's body parsing middleware",
-  "version": "0.0.1",
-  "dependencies": {
-    "raw-body": "~1.1.2"
-  }
-}

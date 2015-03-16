@@ -1,12 +1,7 @@
 {
   "name": "apimock",
-  "main": "index.html",
-  "version": "0.0.1",
-  "private": true,
-  "scripts": {
-    "start": "node_modules/.bin/gulp",
-    "setup": "npm install && cd js/raw-parser && npm install"
-  },
+  "version": "2.0.0",
+  "main": "server.js",
   "contributors": [
     {
       "name": "Americo Albuquerque",
@@ -24,32 +19,40 @@
   },
   "homepage": "https://github.com/aalbuquerque73/apimock",
   "scripts": {
-    "test": "mocha test/**/*.js"
+    "start": "node_modules/.bin/gulp",
+    "test": "mocha test/**/*.js",
+    "pretest": "jshint ."
   },
   "dependencies": {
-    "body-parser": "^1.0.2",
-    "config": "^1.2.0",
-    "cookie-parser": "^1.0.1",
-    "debug": "^0.7.4",
-    "express": "^4.2.0",
-    "express-xml-bodyparser": "0.0.4",
-    "glob": "^4.0.6",
-    "jade": "^1.3.1",
+    "config": "^1.12.0",
+    "glob": "^5.0.2",
     "mkdirp": "^0.5.0",
-    "morgan": "^1.0.1",
-    "pretty-data": "^0.40.0",
-    "q": "^1.0.1",
-    "raw-body": "^1.3.0",
-    "request": "^2.44.0",
-    "serve-favicon": "^2.1.4",
-    "underscore": "^1.7.0",
-    "winston": "^0.8.1"
+    "morgan": "^1.5.1",
+    "q": "^1.2.0",
+    "request": "^2.53.0",
+    "restify": "^3.0.0",
+    "serve-favicon": "^2.2.0",
+    "underscore": "^1.8.2",
+    "winston": "^0.9.0",
+    "xml2js": "^0.4.5"
   },
+  "optionalDependencies": {},
   "devDependencies": {
-    "gulp": "^3.8.8",
-    "gulp-less": "^1.3.6",
-    "mocha": "^1.21.4",
-    "sinon": "^1.12.2",
-    "chai": "^1.10.0"
-  }
+    "brfs": "^1.4.0",
+    "browserify": "^9.0.3",
+    "gulp": "^3.8.11",
+    "gulp-mocha": "^2.0.0",
+    "gulp-size": "^1.2.1",
+    "gulp-util": "^3.0.4",
+    "should": "^5.2.0",
+    "sinon": "^1.14.0",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^2.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aalbuquerque73/apimock"
+  },
+  "description": "apimock"
 }
