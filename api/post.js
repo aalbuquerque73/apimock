@@ -9,6 +9,24 @@ var _ = require('underscore'),
     
     Folders = require('./folders');
 
+function sort(obj) {
+    if (obj && typeof obj === 'object') {
+        var tmp = {};
+        if (Array.isArray(obj)) {
+            tmp = [];
+        }
+        var keys = Object.keys(obj).sort();
+        _.each(keys, function(key) {
+            tmp[key] = sort(obj[key]);
+        });
+        return tmp;
+    }
+    return obj;
+}
+
+function sortedStringify(json) {
+    return stringify(sort(json));
+}
 
 function stringify(json) {
     try {
@@ -19,24 +37,23 @@ function stringify(json) {
     }
 }
 
-function Api(folder, urlList) {
+function Api(urlList) {
     this.folders = new Folders();
     this.folder = this.folders.path;
     this.urlList = urlList;
 }
 Api.prototype = {
     handle: function(req, res, next) {
+        console.log('handle', this.urlList);
         if (!this.urlList.hasOwnProperty(req.params.path)) {
             console.warn(req.params.path, 'not found!');
             res.status(404).send('Not found!');
             return next();
         }
         
-        var url = this.urlList[req.params.path];
-        var connector = _.find(config.connectors, function(item) { return item.url === url; });
-        if (connector) {
-            this.folder = this.folders[connector.name];
-        }
+        var connector = this.urlList[req.params.path];
+        var url = connector.url;
+        this.folder = this.folders[connector.name];
         this.proxy(url, req, res, next)
             .then(function(file) {
                 console.log('post resolved', file);
@@ -63,7 +80,7 @@ Api.prototype = {
         var body = Q.fcall(function() { return req.body; });
         if (req.body.substr(0, 5) === '<?xml') {
             isXml = true;
-            body = Q.nfcall(xml2js.parseString, req.body).then(stringify);
+            body = Q.nfcall(xml2js.parseString, req.body).then(sortedStringify);
         }
         return body.then(function(body) {
             var promises = _.map(fileList, function(file) {
@@ -126,7 +143,7 @@ Api.prototype = {
                 if (response.statusCode === 200) {
                     var calls = [];
                     if (req.body.substr(0, 5) === '<?xml') {
-                        calls.push(Q.nfcall(xml2js.parseString, req.body).then(stringify));
+                        calls.push(Q.nfcall(xml2js.parseString, req.body).then(sortedStringify));
                     } else {
                         calls.push(req.body);
                     }

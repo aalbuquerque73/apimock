@@ -26,7 +26,7 @@ Api.prototype = {
                 if (config.connectors.hasOwnProperty(name)) {
                     var connector = config.connectors[name];
                     logger.log('connector found:', name);
-                    list[connector.binding] = connector.url;
+                    list[connector.binding] = connector;
                 }
             }, this);
             var method = new methodModule(list);

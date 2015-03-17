@@ -21,11 +21,9 @@ Api.prototype = {
             return next();
         }
         
-        var url = this.urlList[req.params.path];
-        var connector = _.find(config.connectors, function(item) { return item.url === url; });
-        if (connector) {
-            this.folder = this.folders[connector.name];
-        }
+        var connector = this.urlList[req.params.path];
+        var url = connector.url;
+        this.folder = this.folders[connector.name];
         this.proxy(url, req, res, next)
             .then(function() {
                 console.log('resolved', arguments);
