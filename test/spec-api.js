@@ -14,12 +14,12 @@ describe('API', function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
-                { "name": "pub", "connectors": [ "pub" ], "paths": [ "/:path/:api" ], "method": "get", "folder": "oxipub" },
-                { "name": "xml", "connectors": [ "trans" ], "paths": [ "/:path" ], "method": "post", "folder": "oxixml" }
+                { "name": "gettest", "connectors": [ "get" ], "paths": [ "/:path/:api" ], "method": "get", "folder": "gettest" },
+                { "name": "posttest", "connectors": [ "post" ], "paths": [ "/:path" ], "method": "post", "folder": "posttest" }
             ])
             .withArgs('connectors').returns({
-                "pub": { "name": "pub", "binding": "pub", "url": "http://localhost", "folder": "pub" },
-                "trans": { "name": "trans", "binding": "xml", "url": "http://localhost", "folder": "transactions" }
+                "get": { "name": "get", "binding": "get", "url": "http://localhost", "folder": "get" },
+                "post": { "name": "post", "binding": "post", "url": "http://localhost", "folder": "post" }
             });
         sinon
             .stub(logger, 'log');

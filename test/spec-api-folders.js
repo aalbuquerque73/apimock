@@ -18,12 +18,12 @@ describe('Folders', function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
-                { "name": "oxipub", "connectors": [ "pub" ], "paths": [ "/:path/:api" ], "method": "get", "folder": "oxipub" },
-                { "name": "oxixml", "connectors": [ "trans" ], "paths": [ "/:path" ], "method": "post", "folder": "oxixml" }
+                { "name": "gettest", "connectors": [ "get" ], "paths": [ "/:path/:api" ], "method": "get", "folder": "gettest" },
+                { "name": "posttest", "connectors": [ "post" ], "paths": [ "/:path" ], "method": "post", "folder": "posttest" }
             ])
             .withArgs('connectors').returns({
-                "pub": { "name": "pub", "binding": "pub", "url": "http://localhost", "folder": "pub" },
-                "trans": { "name": "trans", "binding": "xml", "url": "http://localhost", "folder": "transactions" }
+                "get": { "name": "get", "binding": "get", "url": "http://localhost", "folder": "get" },
+                "post": { "name": "post", "binding": "post", "url": "http://localhost", "folder": "post" }
             });
         sinon
             .stub(logger, 'log');
@@ -33,13 +33,13 @@ describe('Folders', function() {
             });
         sinon
             .stub(fs, 'existsSync')
-            .withArgs('/fake/data/oxipub/pub')
+            .withArgs('/fake/data/gettest/get')
             .returns(false)
-            .withArgs('/fake/data/oxixml/transactions')
+            .withArgs('/fake/data/posttest/post')
             .returns(false)
-            .withArgs('/fake/data/oxipub')
+            .withArgs('/fake/data/gettest')
             .returns(true)
-            .withArgs('/fake/data/oxixml')
+            .withArgs('/fake/data/posttest')
             .returns(true);
         done();
     });
@@ -69,23 +69,23 @@ describe('Folders', function() {
             done();
         });
         
-        it('should have a oxipub property', function(done) {
-            folders.should.have.property('oxipub').and.be.equal('/fake/data/oxipub');
+        it('should have a gettest property', function(done) {
+            folders.should.have.property('gettest').and.be.equal('/fake/data/gettest');
             done();
         });
         
-        it('should have a oxixml property', function(done) {
-            folders.should.have.property('oxixml').and.be.equal('/fake/data/oxixml');
+        it('should have a posttest property', function(done) {
+            folders.should.have.property('posttest').and.be.equal('/fake/data/posttest');
             done();
         });
         
-        it('should have a pub property', function(done) {
-            folders.should.have.property('pub').and.be.equal('/fake/data/oxipub/pub');
+        it('should have a get property', function(done) {
+            folders.should.have.property('get').and.be.equal('/fake/data/gettest/get');
             done();
         });
         
-        it('should have a trans property', function(done) {
-            folders.should.have.property('trans').and.be.equal('/fake/data/oxixml/transactions');
+        it('should have a post property', function(done) {
+            folders.should.have.property('post').and.be.equal('/fake/data/posttest/post');
             done();
         });
         
