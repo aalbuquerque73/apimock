@@ -6,7 +6,8 @@ var _ = require('underscore'),
     request = require('request'),
     config = require('config'),
     
-    Folders = require('./folders');
+    Folders = require('./folders'),
+    equals = require('./comparator');
 
 function Api(urlList) {
     this.folders = new Folders();
@@ -49,17 +50,19 @@ Api.prototype = {
     find: function(fileList, req, res, next) {
         var promises = _.map(fileList, function(file) {
             return Q.Promise(function(resolve, reject) {
-                fs.readFile(file, { encoding: 'utf8'}, function(err, data) {
+                fs.readFile(file, { encoding: 'utf8' }, function(err, data) {
                     if (err) {
                         reject(err);
                         return;
                     }
-                    console.log(data);
-                    if (JSON.stringify(req.params) === data) {
-                        resolve(file);
-                        return;
-                    }
-                    reject(new Error('Not found!'));
+                    equals(req.params, data)
+                        .then(function() {
+                            console.log('File', path.basename(file), 'found!');
+                            resolve(file);
+                        })
+                        .fail(function() {
+                            reject(new Error('Not found!'));
+                        });
                 });
             });
         });
@@ -119,7 +122,7 @@ Api.prototype = {
         return Q.allSettled([
             Q.Promise(function(resolve, reject) {
                 console.log('save to', path.join(this.folder, 'file_' + count + '.req'));
-                fs.writeFile(path.join(this.folder, 'file_' + count + '.req'), JSON.stringify(params), function(err) {
+                fs.writeFile(path.join(this.folder, 'file_' + count + '.req'), JSON.stringify(params, null, 2), function(err) {
                     if (!err) {
                         console.log('file_' + count + '.req saved!');
                         resolve();
@@ -133,7 +136,7 @@ Api.prototype = {
                 fs.writeFile(path.join(this.folder, 'file_' + count + '.stats'), JSON.stringify({
                     status: res.statusCode,
                     headers: res.headers
-                }), function(err) {
+                }, null, 2), function(err) {
                     if (!err) {
                         console.log('file_' + count + '.stats saved!');
                         resolve();

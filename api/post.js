@@ -7,7 +7,8 @@ var _ = require('underscore'),
     xml2js = require('xml2js'),
     config = require('config'),
     
-    Folders = require('./folders');
+    Folders = require('./folders'),
+    equals = require('./comparator');
 
 function sort(obj) {
     if (obj && typeof obj === 'object') {
@@ -80,7 +81,7 @@ Api.prototype = {
         var body = Q.fcall(function() { return req.body; });
         if (req.body.substr(0, 5) === '<?xml') {
             isXml = true;
-            body = Q.nfcall(xml2js.parseString, req.body).then(sortedStringify);
+            body = Q.nfcall(xml2js.parseString, req.body);//.then(sortedStringify);
         }
         return body.then(function(body) {
             var promises = _.map(fileList, function(file) {
@@ -90,11 +91,14 @@ Api.prototype = {
                             reject(err);
                             return;
                         }
-                        if (body === data) {
-                            resolve(file);
-                            return;
-                        }
-                        reject(new Error('Not found!'));
+                        equals(body, data)
+                            .then(function() {
+                                console.log('File', path.basename(file), 'found!');
+                                resolve(file);
+                            })
+                            .fail(function() {
+                                reject(new Error('Not found!'));
+                            });
                     });
                 });
             });
@@ -113,12 +117,7 @@ Api.prototype = {
                             _.each(stats.headers, function(value, key) {
                                 res.setHeader(key, value);
                             });
-                            if (isXml) {
-                                var builder = new xml2js.Builder();
-                                res.write(builder.buildObject(JSON.parse(files[1].value)));
-                            } else {
-                                res.write(files[1].value);
-                            }
+                            res.write(files[1].value);
                             res.end();
                             resolve(result);
                         })
@@ -147,11 +146,8 @@ Api.prototype = {
                     } else {
                         calls.push(req.body);
                     }
-                    if (body.substr(0, 5) === '<?xml') {
-                        calls.push(Q.nfcall(xml2js.parseString, body).then(stringify));
-                    } else {
-                        calls.push(body);
-                    }
+                    calls.push(body);
+                    
                     Q.allSettled(calls)
                         .then(function(params) {
                             return this.save(params[0].value, response, params[1].value, fileList.length)
