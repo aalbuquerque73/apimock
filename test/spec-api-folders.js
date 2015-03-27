@@ -1,4 +1,6 @@
 // test message queue functionality
+/* global before, after, beforeEach, afterEach, describe, it */
+
 var Folders = require('../api/folders'),
     logger = require('../logger'),
     MQ = require('../message-queue'),
@@ -18,12 +20,12 @@ describe('Folders', function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
-                { "name": "gettest", "connectors": [ "get" ], "paths": [ "/:path/:api" ], "method": "get", "folder": "gettest" },
-                { "name": "posttest", "connectors": [ "post" ], "paths": [ "/:path" ], "method": "post", "folder": "posttest" }
+                { 'name': 'oxipub', 'connectors': [ 'pub' ], 'paths': [ '/:path/:api' ], 'method': 'get', 'folder': 'oxipub' },
+                { 'name': 'oxixml', 'connectors': [ 'trans' ], 'paths': [ '/:path' ], 'method': 'post', 'folder': 'oxixml' }
             ])
             .withArgs('connectors').returns({
-                "get": { "name": "get", "binding": "get", "url": "http://localhost", "folder": "get" },
-                "post": { "name": "post", "binding": "post", "url": "http://localhost", "folder": "post" }
+                'pub': { 'name': 'pub', 'binding': 'pub', 'url': 'http://localhost', 'folder': 'pub' },
+                'trans': { 'name': 'trans', 'binding': 'xml', 'url': 'http://localhost', 'folder': 'transactions' }
             });
         sinon
             .stub(logger, 'log');
@@ -33,13 +35,13 @@ describe('Folders', function() {
             });
         sinon
             .stub(fs, 'existsSync')
-            .withArgs('/fake/data/gettest/get')
+            .withArgs('/fake/data/oxipub/pub')
             .returns(false)
-            .withArgs('/fake/data/posttest/post')
+            .withArgs('/fake/data/oxixml/transactions')
             .returns(false)
-            .withArgs('/fake/data/gettest')
+            .withArgs('/fake/data/oxipub')
             .returns(true)
-            .withArgs('/fake/data/posttest')
+            .withArgs('/fake/data/oxixml')
             .returns(true);
         done();
     });
@@ -69,28 +71,28 @@ describe('Folders', function() {
             done();
         });
         
-        it('should have a gettest property', function(done) {
-            folders.should.have.property('gettest').and.be.equal('/fake/data/gettest');
+        it('should have a oxipub property', function(done) {
+            folders.should.have.property('oxipub').and.be.equal('/fake/data/oxipub');
             done();
         });
         
-        it('should have a posttest property', function(done) {
-            folders.should.have.property('posttest').and.be.equal('/fake/data/posttest');
+        it('should have a oxixml property', function(done) {
+            folders.should.have.property('oxixml').and.be.equal('/fake/data/oxixml');
             done();
         });
         
-        it('should have a get property', function(done) {
-            folders.should.have.property('get').and.be.equal('/fake/data/gettest/get');
+        it('should have a pub property', function(done) {
+            folders.should.have.property('pub').and.be.equal('/fake/data/oxipub/pub');
             done();
         });
         
-        it('should have a post property', function(done) {
-            folders.should.have.property('post').and.be.equal('/fake/data/posttest/post');
+        it('should have a trans property', function(done) {
+            folders.should.have.property('trans').and.be.equal('/fake/data/oxixml/transactions');
             done();
         });
         
         it('should have called mkdirp 2 times', function(done) {
-            mkdirp.sync.calledTwice.should.be.true;
+            mkdirp.sync.calledTwice.should.be.equal(true);
             done();
         });
     });

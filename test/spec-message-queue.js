@@ -1,4 +1,6 @@
 // test message queue functionality
+/* global before, after, beforeEach, afterEach, describe, it */
+
 var MessageQueue = require('../message-queue'),
     
     should = require('should');

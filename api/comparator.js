@@ -1,3 +1,4 @@
+/* jshint eqnull:true */
 var _ = require('underscore'),
     Q = require('q');
 
