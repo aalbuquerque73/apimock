@@ -19,9 +19,9 @@
   },
   "homepage": "https://github.com/aalbuquerque73/apimock",
   "scripts": {
-    "start": "node_modules/.bin/gulp",
-    "test": "mocha test/**/*.js",
-    "pretest": "jshint ."
+    "start": "node server",
+    "mon": "nodemon server",
+    "test": "./node_modules/.bin/gulp test"
   },
   "dependencies": {
     "config": "^1.12.0",
