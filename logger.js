@@ -1,5 +1,5 @@
 /*jslint node: true, nomen: true, regexp: true, vars: true */
-"use strict";
+'use strict';
 
 var path = require('path'),
 	mkdirp = require('mkdirp'),
@@ -7,7 +7,7 @@ var path = require('path'),
 
 winston.emitErrs = true;
 
-var root = path.resolve(__dirname.replace(/\\/g, "..")),
+var root = path.resolve(__dirname.replace(/\\/g, '..')),
     logname = path.resolve(root, 'logs/all-logs.log');
 
 mkdirp(path.dirname(logname));

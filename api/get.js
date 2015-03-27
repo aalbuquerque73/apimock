@@ -41,10 +41,15 @@ Api.prototype = {
         return Q.nfcall(glob, path.join(this.folder, '*.req'), { nosort: true, nodir: true })
             .then(function(fileList) {
                 this.find(fileList, req, res, next)
+                .then(function(file) {
+                    console.log('then', path.basename(file), 'found!');
+                    return Q.promise(function(resolve) { resolve(file); });
+                })
                 .fail(function() {
+                    console.log('fail', 'NOT found!');
                     return this.request(url, fileList, req, res, next);
-                }.bind(this))
-            }.bind(this))
+                }.bind(this));
+            }.bind(this));
     },
     
     find: function(fileList, req, res, next) {
@@ -68,9 +73,9 @@ Api.prototype = {
         });
         return Q.any(promises)
             .then(function(result) {
-                console.log('found:', result);
+                console.log('found:', path.basename(result));
                 return Q.Promise(function(resolve, reject) {
-                    console.log('response found... reading files...');
+                    //console.log('response found... reading files...');
                     Q.allSettled([
                         Q.nfcall(fs.readFile, result.replace(/\.req$/, '.stats'), { encoding: 'utf8' }),
                         Q.nfcall(fs.readFile, result.replace(/\.req$/, '.res'), { encoding: 'utf8' })
@@ -83,7 +88,7 @@ Api.prototype = {
                         });
                         res.write(files[1].value);
                         res.end();
-                        resolve();
+                        resolve(result);
                     })
                     .fail(reject);
                 });

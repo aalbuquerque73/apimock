@@ -72,8 +72,8 @@ Api.prototype = {
                 return this.find(fileList, req, res, next)
                 .fail(function() {
                     return this.request(url, fileList, req, res, next);
-                }.bind(this))
-            }.bind(this))
+                }.bind(this));
+            }.bind(this));
     },
     
     find: function(fileList, req, res, next) {

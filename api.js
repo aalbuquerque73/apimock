@@ -18,9 +18,10 @@ Api.prototype = {
     },
     
     apply: function(route) {
-        logger.log('route supported?', (this.supported.routes.indexOf(route.method) !== -1));
-        if (this.supported.routes.indexOf(route.method) !== -1) {
-            var methodModule = require('./api/' + route.method);
+        var supported = (this.supported.routes.indexOf(route.method) !== -1);
+        logger.log('route supported?', supported);
+        if (supported) {
+            var MethodModule = require('./api/' + route.method);
             var list = {};
             _.each(route.connectors, function(name) {
                 if (config.connectors.hasOwnProperty(name)) {
@@ -29,7 +30,7 @@ Api.prototype = {
                     list[connector.binding] = connector;
                 }
             }, this);
-            var method = new methodModule(list);
+            var method = new MethodModule(list);
             return {
                 to: function(server) {
                     logger.log('connecting paths to server', server.name);

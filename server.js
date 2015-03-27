@@ -43,8 +43,9 @@ server.use(function (req, res, next) {
 
 // Server error
 server.use(function (err, req, res, next) {
+    console.error('Error:', err);
     res.status(err.status || 500);
-    res.render('error', {
+    res.send({
         message: err.message,
         error: (environment === 'development') ? err : {}
     });
