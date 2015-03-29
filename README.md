@@ -6,7 +6,7 @@ no reason for why outages should slow you down.
 In essence, ApiMock is a HTTP proxy. It intercepts requests and replays captured responses. The tool is proven 
 in real-life projects. As such, it is easy to set up, has a minimal configuration with sensible defaults and comprises a set of thoughtful features. 
 
-# Key Features
+## Key Features
 
 * supports the most frequently used HTTP methods (GET, POST, PUT, DELETE)
 * caters for a variety of architectures - REST, SOAP, query parameters .. 
@@ -17,7 +17,7 @@ in real-life projects. As such, it is easy to set up, has a minimal configuratio
 
 The list goes on.
 
-# Installation Instructions
+## Installation Instructions
 
 ```git clone git@github.com:aalbuquerque73/apimock.git && cd apimock sudo npm install```
 
@@ -37,7 +37,7 @@ verbose: binding /:path to get
 verbose: api-proxy listening at http://0.0.0.0:8081
 ```
 
-# Quick Start
+## Quick Start
 
 Here are a few quick examples to help you get started. To give you an idea of how to best
 utilise the tool in your own setup, we cover a range of different APIs. In particular:
@@ -46,7 +46,7 @@ utilise the tool in your own setup, we cover a range of different APIs. In parti
 * [JsonTest](http://www.jsontest.com) - REST + JSON, includes HTTP POST
 * [Google Maps API](https://developers.google.com/maps) - just because it's cool
 
-## Example 1 - A simple GET via WikiMedia API
+### Example 1 - A simple GET via WikiMedia API
 
 The example shows how to connect to a typical endpoint, intercept the returned responses and replay them.
 
@@ -129,10 +129,10 @@ __file_0.stats__ retains the response status and all of the response headers:
 }
 </pre>
 
-## Example 2 - Going REST with JsonTest
+### Example 2 - Going REST with JsonTest
 
 TODO
 
-# Configuration Explained
+## Configuration Explained
 
 TODO
