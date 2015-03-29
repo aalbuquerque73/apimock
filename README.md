@@ -1,11 +1,10 @@
 # ApiMock
 
 Do you depend on 3rd-party APIs? Does HTTP 503 "Service unavailable" sound way too familiar? There is absolutely
-no reason for why outages should slow you down or even prevent you from meeting set deadlines.
+no reason for why outages should slow you down.
 
 In essence, ApiMock is a HTTP proxy. It intercepts requests and replays captured responses. The tool is proven 
-in real-life projects. As such, it is easy to set up, has a minimal configuration with sensible defaults and comprises 
-a set of thoughtful features. 
+in real-life projects. As such, it is easy to set up, has a minimal configuration with sensible defaults and comprises a set of thoughtful features. 
 
 # Key Features
 
@@ -20,21 +19,32 @@ The list goes on.
 
 # Installation Instructions
 
-```git clone git@github.com:aalbuquerque73/apimock.git && cd apimock
-sudo npm install```
+```git clone git@github.com:aalbuquerque73/apimock.git && cd apimock sudo npm install```
 
-Now start the server, as you can see it runs on the port 8081 by default.
+Now start the server: ```npm start```
 
-```npm start```
+As you can see it runs on the port 8081 by default:
+
+```
+> node server
+
+verbose: environment: development
+verbose: setting up route: 
+verbose: route supported? true
+verbose: connector found: wiki_conn
+verbose: connecting paths to server api-proxy
+verbose: binding /:path to get
+verbose: api-proxy listening at http://0.0.0.0:8081
+```
 
 # Quick Start
 
 Here are a few quick examples to help you get started. To give you an idea of how to best
 utilise the tool in your own setup, we cover a range of different APIs. In particular:
 
-* WikiMedia - query parameters, variety of data formats
-* JsonTest - REST + JSON, includes HTTP POST
-* Google Maps API - just because it's cool
+* [WikiMedia](http://www.mediawiki.org/wiki/API:Main_page) - query parameters, variety of data formats
+* [JsonTest](http://www.jsontest.com) - REST + JSON, includes HTTP POST
+* [Google Maps API](https://developers.google.com/maps) - just because it's cool
 
 ## Example 1 - A simple GET via WikiMedia API
 
