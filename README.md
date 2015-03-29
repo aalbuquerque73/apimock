@@ -65,7 +65,7 @@ Let's start by editing the configuration - __conf/default.json__:
 
 Save the changes and start the server by running ```npm start```
 
-Go to the browser and enter the following link taken from the wiki examples:
+Go to the browser and enter the following query (taken from the [wiki example](http://en.wikipedia.org/w/api.php?action=query&titles=San_Francisco&prop=images&imlimit=20&format=json)):
 
 __http://localhost:8081/wiki?action=query&titles=San_Francisco&prop=images&imlimit=20&format=json__
 
