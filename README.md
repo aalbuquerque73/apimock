@@ -71,7 +71,7 @@ __http://localhost:8081/wiki?action=query&titles=San_Francisco&prop=images&imlim
 
 Here is what you should get:
 
--- picture1 --
+<img border="0" alt="Wiki: San Francisco" src="https://github.com/zezutom/zezutom.github.io/blob/master/img/apimock/example-1/wiki_san_francisco_json.png">
 
 Let's take a look at the saved data:
 
