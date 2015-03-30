@@ -7,7 +7,7 @@ var _ = require('underscore'),
     xml2js = require('xml2js'),
     config = require('config'),
     
-    Folders = require('./folders'),
+    folders = require('./folders'),
     equals = require('./comparator');
 
 function sort(obj) {
@@ -39,8 +39,7 @@ function stringify(json) {
 }
 
 function Api(urlList) {
-    this.folders = new Folders();
-    this.folder = this.folders.path;
+    this.folder = folders.path;
     this.urlList = urlList;
 }
 Api.prototype = {
@@ -52,9 +51,9 @@ Api.prototype = {
             return next();
         }
         
-        var connector = this.urlList[req.params.path];
-        var url = connector.url;
-        this.folder = this.folders[connector.name];
+        var proxy = this.urlList[req.params.path];
+        var url = proxy.url;
+        this.folder = folders[proxy.name];
         this.proxy(url, req, res, next)
             .then(function(file) {
                 console.log('post resolved', file);

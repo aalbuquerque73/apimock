@@ -6,12 +6,13 @@ var _ = require('underscore'),
     request = require('request'),
     config = require('config'),
     
-    Folders = require('./folders'),
+    overriders = require('./overriders'),
+    
+    folders = require('./folders'),
     equals = require('./comparator');
 
 function Api(urlList) {
-    this.folders = new Folders();
-    this.folder = this.folders.path;
+    this.folder = folders.path;
     this.urlList = urlList;
 }
 Api.prototype = {
@@ -22,10 +23,9 @@ Api.prototype = {
             return next();
         }
         
-        var connector = this.urlList[req.params.path];
-        var url = connector.url;
-        this.folder = this.folders[connector.name];
-        this.proxy(url, req, res, next)
+        var proxy = this.urlList[req.params.path];
+        this.folder = folders[proxy.name];
+        this.proxy(proxy, req, res, next)
             .then(function() {
                 console.log('resolved', arguments);
                 next();
@@ -37,18 +37,24 @@ Api.prototype = {
     },
     
     
-    proxy: function(url, req, res, next) {
-        return Q.nfcall(glob, path.join(this.folder, '*.req'), { nosort: true, nodir: true })
+    proxy: function(proxy, req, res, next) {
+        var url = proxy.url;
+        var patterns = [ path.join(folders[proxy.name], '*.req') ];
+        overriders.override.if.needed(patterns, proxy, this);
+        return Q.allSettled(_.map(patterns, function(pattern) {
+            return Q.nfcall(glob, pattern, { nosort: true, nodir: true });
+        }, this))
             .then(function(fileList) {
+                fileList = _.chain(fileList).map(function(result) { return result.value; }).flatten().value();
                 this.find(fileList, req, res, next)
-                .then(function(file) {
-                    console.log('then', path.basename(file), 'found!');
-                    return Q.promise(function(resolve) { resolve(file); });
-                })
-                .fail(function() {
-                    console.log('fail', 'NOT found!');
-                    return this.request(url, fileList, req, res, next);
-                }.bind(this));
+                    .then(function(file) {
+                        console.log('then', path.basename(file), 'found!');
+                        return Q.promise(function(resolve) { resolve(file); });
+                    })
+                    .fail(function() {
+                        console.log('fail', 'NOT found!');
+                        return this.request(url, fileList, req, res, next);
+                    }.bind(this));
             }.bind(this));
     },
     
@@ -71,8 +77,12 @@ Api.prototype = {
                 });
             });
         });
-        return Q.any(promises)
+        return Q.allSettled(promises)
             .then(function(result) {
+                var chain = _.chain(result)
+                    .filter(function(file) { return file.state === 'fulfilled'; })
+                    .first();
+                result = chain.value().value;
                 console.log('found:', path.basename(result));
                 return Q.Promise(function(resolve, reject) {
                     //console.log('response found... reading files...');
