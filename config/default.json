@@ -1,11 +1,43 @@
 {
     "routes": [
-        { "name": "name1", "connectors": [ "connector1", "connector2" ], "paths": [ "/:path", "/:path/:api" ], "method": "get", "folder": "folder1" },
-        { "name": "name2", "connectors": [ "connector3" ], "paths": [ "/:path" ], "method": "post", "folder": "folder2" }
-    ],
-    "connectors": {
-        "connector1": { "name": "connector1", "binding": "search", "url": "http://www.google.com", "folder": "google" },
-        "connector2": { "name": "connector2", "binding": "wiki", "url": "http://en.wikibooks.org/", "folder": "wikipedia" },
-        "connector3": { "name": "connector3", "binding": "w", "url": "https://en.wikibooks.org", "folder": "wikipedia/login" }
-    }
+        {
+            "name": "name1",
+            "proxies": [
+                {
+                    "name": "proxy1",
+                    "binding": "search",
+                    "url": "http://www.google.com",
+                    "folder": "google"
+                },
+                {
+                    "name": "proxy2",
+                    "binding": "wiki",
+                    "url": "http://en.wikibooks.org/",
+                    "folder": "wikipedia"
+                }
+            ],
+            "paths": [
+                "/:path",
+                "/:path/:api"
+            ],
+            "method": "get",
+            "folder": "folder1"
+        },
+        {
+            "name": "name2",
+            "proxies": [
+                {
+                    "name": "proxy3",
+                    "binding": "w",
+                    "url": "https://en.wikibooks.org",
+                    "folder": "wikipedia/login"
+                }
+            ],
+            "paths": [
+                "/:path"
+            ],
+            "method": "post",
+            "folder": "folder2"
+        }
+    ]
 }

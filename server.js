@@ -3,7 +3,9 @@ var path = require('path'),
     favicon = require('serve-favicon'),
     logger = require('./logger'),
     morgan = require('morgan'),
-    util = require('util');
+    util = require('util'),
+    
+    config = require('config');
 
 var api = require('./api');
 var MQ = require('./message-queue');
@@ -23,7 +25,7 @@ var server = restify.createServer({
 });
 
 server.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-server.use(restify.acceptParser(server.acceptable));
+//server.use(restify.acceptParser(server.acceptable));
 server.use(restify.queryParser());
 server.use(restify.bodyParser());
 
@@ -51,6 +53,6 @@ server.use(function (err, req, res, next) {
     });
 });
 
-server.listen(8081, function() {
+server.listen(config.server.port || 8081, function() {
     logger.log(server.name, 'listening at', server.url);
 });

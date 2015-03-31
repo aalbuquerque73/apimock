@@ -7,7 +7,6 @@ function Api() {
         routes: [ 'get', 'post' ]
     };
     this.routes = config.get('routes');
-    this.connectors = config.get('connectors');
 }
 Api.prototype = {
     setup: function(server) {
@@ -21,23 +20,39 @@ Api.prototype = {
         var supported = (this.supported.routes.indexOf(route.method) !== -1);
         logger.log('route supported?', supported);
         if (supported) {
+            route.method = route.method || 'get';
             var MethodModule = require('./api/' + route.method);
+            route.name = (route.name || route.folder || '') + '/';
             var list = {};
-            _.each(route.connectors, function(name) {
-                if (config.connectors.hasOwnProperty(name)) {
-                    var connector = config.connectors[name];
-                    logger.log('connector found:', name);
-                    list[connector.binding] = connector;
-                }
-            }, this);
+            if (Array.isArray(route.proxies)) {
+                _.each(route.proxies, function(proxy) {
+                    var name = proxy.name || proxy.folder || 'proxy';
+                    logger.log('proxy found:', name);
+                    proxy.name = route.name + name;
+                    proxy.route = route;
+                    list[proxy.binding] = proxy;
+                }, this);
+            } else {
+                list[route.paths] = {
+                    name: route.name + 'proxy',
+                    route: route,
+                    binding: route.paths,
+                    url: route.proxies
+                };
+            }
             var method = new MethodModule(list);
             return {
                 to: function(server) {
                     logger.log('connecting paths to server', server.name);
-                    _.each(route.paths, function(path) {
-                        logger.log('binding', path, 'to', route.method);
-                        server[route.method](path, method.handle.bind(method));
-                    });
+                    if (Array.isArray(route.paths)) {
+                        _.each(route.paths, function(path) {
+                            logger.log('binding', path, 'to', route.method);
+                            server[route.method](path, method.handle.bind(method));
+                        });
+                    } else {
+                        logger.log('binding', route.paths, 'to', route.method);
+                        server[route.method](route.paths, method.handle.bind(method));
+                    }
                 }
             };
         }

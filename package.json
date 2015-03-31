@@ -20,7 +20,7 @@
   "homepage": "https://github.com/aalbuquerque73/apimock",
   "scripts": {
     "start": "node server",
-    "mon": "nodemon server",
+    "mon": "nodemon server -e js,json --ignore data,public,demo,node_modules server",
     "test": "./node_modules/.bin/gulp test"
   },
   "dependencies": {
