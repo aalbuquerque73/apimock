@@ -7,6 +7,8 @@ var _ = require('underscore'),
     xml2js = require('xml2js'),
     config = require('config'),
     
+    overriders = require('./overriders'),
+    
     folders = require('./folders'),
     equals = require('./comparator');
 
@@ -44,7 +46,6 @@ function Api(urlList) {
 }
 Api.prototype = {
     handle: function(req, res, next) {
-        console.log('handle', this.urlList);
         if (!this.urlList.hasOwnProperty(req.params.path)) {
             console.warn(req.params.path, 'not found!');
             res.status(404).send('Not found!');
@@ -52,9 +53,9 @@ Api.prototype = {
         }
         
         var proxy = this.urlList[req.params.path];
-        var url = proxy.url;
+        overriders.save.folders(proxy, proxy.route);
         this.folder = folders[proxy.name];
-        this.proxy(url, req, res, next)
+        this.proxy(proxy, req, res, next)
             .then(function(file) {
                 console.log('post resolved', file);
                 next();
@@ -65,13 +66,23 @@ Api.prototype = {
             });
     },
     
-    proxy: function(url, req, res, next) {
-        return Q.nfcall(glob, path.join(this.folder, '*.req'), { nosort: true, nodir: true })
+    proxy: function(proxy, req, res, next) {
+        var url = proxy.url;
+        var patterns = [ path.join(folders[proxy.name], '*.req') ];
+        overriders.override.if.needed(patterns, proxy, this);
+        return Q.allSettled(_.map(patterns, function(pattern) {
+            return Q.nfcall(glob, pattern, { nosort: true, nodir: true });
+        }, this))
             .then(function(fileList) {
+                fileList = _.chain(fileList).map(function(result) { return result.value; }).flatten().value();
                 return this.find(fileList, req, res, next)
-                .fail(function() {
-                    return this.request(url, fileList, req, res, next);
-                }.bind(this));
+                    .then(function(file) {
+                        console.log('then', path.basename(file), 'found!');
+                        return Q.promise(function(resolve) { resolve(file); });
+                    })
+                    .fail(function() {
+                        return this.request(url, fileList, req, res, next);
+                    }.bind(this));
             }.bind(this));
     },
     

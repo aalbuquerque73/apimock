@@ -24,6 +24,7 @@ Api.prototype = {
         }
         
         var proxy = this.urlList[req.params.path];
+        overriders.save.folders(proxy, proxy.route);
         this.folder = folders[proxy.name];
         this.proxy(proxy, req, res, next)
             .then(function() {
