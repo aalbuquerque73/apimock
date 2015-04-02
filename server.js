@@ -53,6 +53,10 @@ server.use(function (err, req, res, next) {
     });
 });
 
-server.listen(config.server.port || 8081, function() {
+var port = 8081;
+if (config.server && config.server.port) {
+    port = config.server.port;
+}
+server.listen(port, function() {
     logger.log(server.name, 'listening at', server.url);
 });
