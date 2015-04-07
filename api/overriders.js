@@ -2,7 +2,8 @@ var _ = require('underscore'),
     fs = require('fs'),
     mkdirp = require('mkdirp'),
     path = require('path'),
-    folders = require('./folders');
+    folders = require('./folders'),
+    bodyParser = require('body-parser');
 
 function joinIfArray(folder) {
     if (Array.isArray(folder)) {
@@ -61,6 +62,19 @@ function Overrides() {
                                             }
                                         }.bind(folders[override.name]);
                                     }
+                                    if (override.type === 'static') {
+                                        folders[override.name].next = function() {};
+                                        folders[override.name].staticNext = function(index) {
+                                            if (typeof index === 'string') {
+                                                this.index = parseInt(index);
+                                            } else {
+                                                ++this.index;
+                                            }
+                                            if (this.index >= this.length) {
+                                                this.index = 0;
+                                            }
+                                        }.bind(folders[override.name]);
+                                    }
                                     folders[override.name].current = function() {
                                         return this[this.index];
                                     }.bind(folders[override.name]);
@@ -109,6 +123,42 @@ function Overrides() {
                 }
             }. bind(this)
         }
+    };
+    
+    function parser(req, res, next) {
+        if (typeof req.body === 'string') {
+            var body = {};
+            var tokens = req.body.split('&');
+            if (_.all(tokens, function(token) {
+                var pair = token.split('=');
+                body[pair[0]] = pair[1];
+                return pair.length == 2;
+            })) {
+                req.raw = req.body;
+                req.body = body;
+            }
+        }
+        next();
+    }
+    
+    this.apply = function(server) {
+        server.post('/_overrides', parser, function(req, res, next) {
+            if (folders.hasOwnProperty(req.body.path)) {
+                if (folders[req.body.path].staticNext) {
+                    folders[req.body.path].staticNext(req.body.index);
+                    res.send('OK');
+                    next();
+                    return;
+                }
+            }
+            res.status(404);
+            res.send('Not found!');
+            next();
+        }.bind(this));
+    };
+    
+    this.init = function() {
+        folders.init();
     };
 }
 
