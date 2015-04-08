@@ -6,6 +6,8 @@ var _ = require('underscore'),
     request = require('request'),
     config = require('config'),
     
+    restify = require('restify'),
+    
     overriders = require('./overriders'),
     
     folders = require('./folders'),
@@ -18,9 +20,8 @@ function Api(urlList) {
 Api.prototype = {
     handle: function(req, res, next) {
         if (!this.urlList.hasOwnProperty(req.params.path)) {
-            console.warn(req.params.path, 'not found!');
-            res.status(404).send('Not found!');
-            return next();
+            res.send(404, 'Not handled!');
+            return next(new restify.errors.ResourceNotFoundError('Not Handled', '"' + req.params.path + '" is not defined by configuration'));
         }
         
         var proxy = this.urlList[req.params.path];
@@ -29,11 +30,11 @@ Api.prototype = {
         this.proxy(proxy, req, res, next)
             .then(function() {
                 console.log('resolved', arguments);
-                next();
+                return next();
             })
             .fail(function(error) {
                 console.error(error);
-                next(error);
+                return next(error);
             });
     },
     
