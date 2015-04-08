@@ -1,6 +1,6 @@
 {
     "verbose": true,
-    "ignore": [ "data/*", "public/*", "demo/*", "node_modules/*" ],
+    "ignore": [ "data/*", "public/*", "demo/*", "node_modules/*", ".git/*" ],
     "watch": [ "*" ],
     "ext": ["js", "json"]
 }
