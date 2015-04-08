@@ -1,8 +1,7 @@
 // test message queue functionality
 /* global before, after, beforeEach, afterEach, describe, it */
 
-var Folders = require('../api/folders'),
-    logger = require('../logger'),
+var logger = require('../logger'),
     MQ = require('../message-queue'),
     
     mkdirp = require('mkdirp'),
@@ -20,13 +19,9 @@ describe('Folders', function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
-                { 'name': 'oxipub', 'connectors': [ 'pub' ], 'paths': [ '/:path/:api' ], 'method': 'get', 'folder': 'oxipub' },
-                { 'name': 'oxixml', 'connectors': [ 'trans' ], 'paths': [ '/:path' ], 'method': 'post', 'folder': 'oxixml' }
-            ])
-            .withArgs('connectors').returns({
-                'pub': { 'name': 'pub', 'binding': 'pub', 'url': 'http://localhost', 'folder': 'pub' },
-                'trans': { 'name': 'trans', 'binding': 'xml', 'url': 'http://localhost', 'folder': 'transactions' }
-            });
+                { 'name': 'get', 'proxies': [ { 'name': 'doget', 'binding': 'doget', 'url': 'http://localhost', 'folder': 'doget' } ], 'paths': [ '/:path/:api' ], 'method': 'get', 'folder': 'get' },
+                { 'name': 'post', 'proxies': [ { 'name': 'dopost', 'binding': 'dopost', 'url': 'http://localhost', 'folder': 'dopost' } ], 'paths': [ '/:path' ], 'method': 'post', 'folder': 'post' }
+            ]);
         sinon
             .stub(logger, 'log');
         sinon
@@ -35,13 +30,13 @@ describe('Folders', function() {
             });
         sinon
             .stub(fs, 'existsSync')
-            .withArgs('/fake/data/oxipub/pub')
+            .withArgs('/fake/data/get/doget')
             .returns(false)
-            .withArgs('/fake/data/oxixml/transactions')
+            .withArgs('/fake/data/post/dopost')
             .returns(false)
-            .withArgs('/fake/data/oxipub')
+            .withArgs('/fake/data/get')
             .returns(true)
-            .withArgs('/fake/data/oxixml')
+            .withArgs('/fake/data/post')
             .returns(true);
         done();
     });
@@ -56,7 +51,9 @@ describe('Folders', function() {
     beforeEach(function(done) {
         sinon
             .stub(mkdirp, 'sync', function(){});
-        folders = new Folders();
+        folders = require('../api/folders');
+        folders.reset();
+        folders.init();
         done();
     });
     
@@ -71,23 +68,23 @@ describe('Folders', function() {
             done();
         });
         
-        it('should have a oxipub property', function(done) {
-            folders.should.have.property('oxipub').and.be.equal('/fake/data/oxipub');
+        it('should have a get/ property', function(done) {
+            folders.should.have.property('get/').and.be.equal('/fake/data/get');
             done();
         });
         
-        it('should have a oxixml property', function(done) {
-            folders.should.have.property('oxixml').and.be.equal('/fake/data/oxixml');
+        it('should have a post/ property', function(done) {
+            folders.should.have.property('post/').and.be.equal('/fake/data/post');
             done();
         });
         
-        it('should have a pub property', function(done) {
-            folders.should.have.property('pub').and.be.equal('/fake/data/oxipub/pub');
+        it('should have a get/doget property', function(done) {
+            folders.should.have.property('get/doget').and.be.equal('/fake/data/get/doget');
             done();
         });
         
-        it('should have a trans property', function(done) {
-            folders.should.have.property('trans').and.be.equal('/fake/data/oxixml/transactions');
+        it('should have a post/dopost property', function(done) {
+            folders.should.have.property('post/dopost').and.be.equal('/fake/data/post/dopost');
             done();
         });
         

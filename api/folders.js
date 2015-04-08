@@ -37,6 +37,15 @@ Folders.prototype = {
                 }
             }, this);
         }.bind(this));
+    },
+    
+    reset: function() {
+        _.each(this, function(val, key) {
+            delete this[key];
+        }, this);
+        
+        this.base = './data';
+        this.path = 'null';
     }
 };
 
