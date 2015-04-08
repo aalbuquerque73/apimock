@@ -30,7 +30,7 @@ server.use(restify.queryParser());
 server.use(restify.bodyParser());
 
 server.use(morgan('dev', {
-    skip: function(req, res) { return res.statusCode < 000; },
+    skip: function(req, res) { return res.statusCode < 400; },
     stream: logger.stream
 }));
 

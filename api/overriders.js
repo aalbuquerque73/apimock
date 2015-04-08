@@ -112,7 +112,7 @@ function Overrides() {
                                 if (Array.isArray(folders[override.name])) {
                                     that.folder = folders[override.name].current();
                                     patterns.unshift(path.join(that.folder, '*.req'));
-                                    folders[override.name].next()
+                                    folders[override.name].next();
                                 } else {
                                     that.folder = folders[override.name];
                                     patterns.unshift(path.join(folders[override.name], '*.req'));
