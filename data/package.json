@@ -1,0 +1,33 @@
+{
+  "name": "rename",
+  "version": "0.0.1",
+  "main": "rename.js",
+  "contributors": [
+    {
+      "name": "Americo Albuquerque",
+      "email": "americo.l.albuquerque@gmail.com",
+      "url": "http://www.aalbuquerque.com"
+    }
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aalbuquerque73/apimock/data"
+  },
+  "bugs": {
+    "url": "https://github.com/aalbuquerque73/apimock/issues"
+  },
+  "homepage": "https://github.com/aalbuquerque73/apimock",
+  "scripts": {
+    "events": "node rename -m '{{template}}_{{event}}'"
+  },
+  "dependencies": {
+    "glob": "^5.0.3",
+    "minimist": "^1.1.1",
+    "q": "^1.2.0",
+    "underscore": "^1.8.3"
+  },
+  "optionalDependencies": {},
+  "devDependencies": {},
+  "description": "rename"
+}
