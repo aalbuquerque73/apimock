@@ -1,43 +1,16 @@
 {
     "routes": [
         {
-            "name": "name1",
             "proxies": [
                 {
-                    "name": "proxy1",
-                    "binding": "search",
-                    "url": "http://www.google.com",
-                    "folder": "google"
-                },
-                {
-                    "name": "proxy2",
-                    "binding": "wiki",
-                    "url": "http://en.wikibooks.org/",
-                    "folder": "wikipedia"
+                    "binding": "date",
+                    "url": "http://date.jsontest.com",
+                    "folder": "date"
                 }
             ],
-            "paths": [
-                "/:path",
-                "/:path/:api"
-            ],
+            "paths": [ "/:path" ],
             "method": "get",
-            "folder": "folder1"
-        },
-        {
-            "name": "name2",
-            "proxies": [
-                {
-                    "name": "proxy3",
-                    "binding": "w",
-                    "url": "https://en.wikibooks.org",
-                    "folder": "wikipedia/login"
-                }
-            ],
-            "paths": [
-                "/:path"
-            ],
-            "method": "post",
-            "folder": "folder2"
+            "folder": "jsontest"
         }
     ]
 }
