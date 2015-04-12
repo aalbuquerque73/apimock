@@ -1,6 +1,7 @@
 var _ = require('underscore'),
     config = require('config'),
-    logger = require('./logger');
+    logger = require('./logger'),
+    overriders = require('./api/overriders');
 
 function Api() {
     this.supported = {
@@ -10,6 +11,8 @@ function Api() {
 }
 Api.prototype = {
     setup: function(server) {
+        overriders.init();
+        overriders.apply(server);
         _.each(this.routes, function(route) {
             logger.log('setting up route:', route.name);
             this.apply(route).to(server);

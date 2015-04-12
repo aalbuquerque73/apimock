@@ -36,21 +36,16 @@ server.use(morgan('dev', {
 
 api.setup(server);
 
-// Not found
-server.use(function (req, res, next) {
-    var err = new Error('Not Found');
-    err.status = 404;
-    next(err);
+server.on('InternalServerError', function (req, res, err, next) {
+    console.log('Server Error:', err);
+    err._customContent = 'something is wrong!';
+    return next();
 });
 
-// Server error
-server.use(function (err, req, res, next) {
-    console.error('Error:', err);
-    res.status(err.status || 500);
-    res.send({
-        message: err.message,
-        error: (environment === 'development') ? err : {}
-    });
+server.on('NotFound', function(req, res, err, next) {
+    console.log('Not found:', req.url, 'was not handled by this server!');
+    res.send(404, req.url + 'was not handled by this server!');
+    return next(new restify.errors.ConflictError(req.url + 'was not handled by this server!'));
 });
 
 var port = 8081;

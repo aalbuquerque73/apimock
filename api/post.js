@@ -58,11 +58,11 @@ Api.prototype = {
         this.proxy(proxy, req, res, next)
             .then(function(file) {
                 console.log('post resolved', file);
-                next();
+                return next();
             })
             .fail(function(error) {
                 console.error(error);
-                next(error);
+                return next(error);
             });
     },
     
@@ -87,10 +87,8 @@ Api.prototype = {
     },
     
     find: function(fileList, req, res, next) {
-        var isXml = false;
         var body = Q.fcall(function() { return req.body; });
         if (req.body.substr(0, 5) === '<?xml') {
-            isXml = true;
             body = Q.nfcall(xml2js.parseString, req.body);//.then(sortedStringify);
         }
         return body.then(function(body) {
