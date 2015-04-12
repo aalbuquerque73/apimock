@@ -109,8 +109,9 @@ Api.prototype = {
     
     request: function(url, fileList, req, res, next) {
         return Q.Promise(function(resolve, reject) {
-            console.log('file not found, requesting from', url + req.url);
-            request(url + req.url, function(error, response, body) {
+            var apiUrl = url + req.url.replace(req.params.path + '/', '');
+            console.log('file not found, requesting from', apiUrl);
+            request(apiUrl, function(error, response, body) {
                 if (error) {
                     reject(error);
                     return;
