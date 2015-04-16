@@ -45,7 +45,7 @@ gulp.task('test', [ 'jshint' ], function() {
 });
 
 gulp.task('jshint', function() {
-    return gulp.src([ '**/*.js', '!node_modules/**', '!public/**' ])
+    return gulp.src([ '**/*.js', '!node_modules/**', '!public/**', '!data/**', '!demo/**' ])
         .pipe(plumber(function(error) {
             // Output error message
             gutil.log(gutil.colors.red(['Error (', error.plugin, '): ', error.message].join('')));
@@ -53,6 +53,7 @@ gulp.task('jshint', function() {
             gulp.emit('task_err', error);
             this.emit('end');
         }))
+        .pipe(size({title: 'test', showFiles: true}))
         .pipe(jshint())
         .pipe(jshint.reporter(stylish, {
             fail: true
