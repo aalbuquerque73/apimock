@@ -8,6 +8,8 @@ var _ = require('underscore'),
     config = require('config'),
     logger = require('../logger'),
     
+    restify = require('restify'),
+    
     overriders = require('./overriders'),
     
     folders = require('./folders'),
@@ -57,9 +59,9 @@ function Api(route) {
 Api.prototype = {
     handle: function(req, res, next) {
         if (!this.proxyList.hasOwnProperty(req.params.binding)) {
-            logger.warn(req.params.path, 'not found!');
-            //res.status(404).send('Not found!');
-            return next();
+            logger.warn('Not Handled', '"' + req.params.binding + '" is not defined by configuration');
+            //res.send(404, 'Not handled!');
+            return next(new restify.errors.ResourceNotFoundError('Not Handled', '"' + req.params.binding + '" is not defined by configuration'));
         }
         
         var proxy = this.proxyList[req.params.binding];
