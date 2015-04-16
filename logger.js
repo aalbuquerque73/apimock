@@ -39,7 +39,23 @@ module.exports.stream = {
         logger.info(message);
     }
 };
+
 module.exports.log = function() {
     var args = Array.prototype.slice.call(arguments);
     logger.log('verbose', args.join(' '));
+};
+
+module.exports.info = function() {
+    var args = Array.prototype.slice.call(arguments);
+    logger.log('info', args.join(' '));
+};
+
+module.exports.warn = function() {
+    var args = Array.prototype.slice.call(arguments);
+    logger.log('warn', args.join(' '));
+};
+
+module.exports.error = function() {
+    var args = Array.prototype.slice.call(arguments);
+    logger.log('error', args.join(' '));
 };
