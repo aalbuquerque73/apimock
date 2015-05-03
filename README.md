@@ -79,7 +79,7 @@ __conf/default.json__
                     "folder": "date"
                 }
             ],
-            "paths": [ "/:path" ],
+            "paths": [ "/:binding" ],
             "method": "get",
             "folder": "jsontest"
         }
@@ -117,7 +117,7 @@ __file_0.req__ keeps information about the original request:
 
 <pre>
 {
-  "path": "date"
+  "binding": "date"
 }  
 </pre>
 
@@ -184,7 +184,7 @@ __Configuration:__
                     "folder": "echo"
                 }
             ],
-            "paths": [ "/:path/:key/:val" ],
+            "paths": [ "/:binding/:key/:val" ],
             "method": "get",
             "folder": "jsontest"
         }
@@ -206,7 +206,7 @@ __file_0.req__
 
 <pre>
 {
-  "path": "echo",
+  "binding": "echo",
   "key": "message",
   "val": "hello"
 }  
@@ -239,9 +239,9 @@ __file_0.stats__
 
 ### Query String
 
-__Endpoint:__  [http://validate.jsontest.com/?json={"key":"value"}](http://validate.jsontest.com/?json={'key':'value'}) 
+__Endpoint:__  [http://validate.jsontest.com/?json={"key":"value"}](http://validate.jsontest.com/?json={"key":"value"}) 
 
-__Invocation:__ [http://localhost:8081/validate?json={"key":"value"}](http://validate.jsontest.com/?json={'key':'value'})
+__Invocation:__ [http://localhost:8081/validate?json={"key":"value"}](http://localhost:8081/validate?json={"key":"value"}})
 
 __Response:__
 
@@ -268,7 +268,7 @@ __Configuration:__
                     "folder": "validate"
                 }
             ],
-            "paths": [ "/:path" ],
+            "paths": [ "/:binding" ],
             "method": "get",
             "folder": "jsontest"
         }
