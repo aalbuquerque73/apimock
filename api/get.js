@@ -5,42 +5,52 @@ var _ = require('underscore'),
     path = require('path'),
     request = require('request'),
     config = require('config'),
+    logger = require('../logger'),
     
     restify = require('restify'),
     
     overriders = require('./overriders'),
     
     folders = require('./folders'),
-    equals = require('./comparator');
+    compare = require('./comparator');
 
-function Api(urlList) {
+function Api(route) {
     this.folder = folders.path;
-    this.urlList = urlList;
+    this.route = route;
+    this.proxyList = {};
+    _.each(route.proxies, function(proxy) {
+        var name = proxy.name || proxy.folder || 'proxy';
+        logger.info('proxy found:', name);
+        proxy.name = route.name + name;
+        proxy.route = route;
+
+        this.proxyList[proxy.binding] = proxy;
+    }, this);
 }
 Api.prototype = {
     handle: function(req, res, next) {
-        if (!this.urlList.hasOwnProperty(req.params.path)) {
-            res.send(404, 'Not handled!');
-            return next(new restify.errors.ResourceNotFoundError('Not Handled', '"' + req.params.path + '" is not defined by configuration'));
+        if (!this.proxyList.hasOwnProperty(req.params.binding)) {
+            logger.warn('Not Handled', '"' + req.params.binding + '" is not defined by configuration');
+            //res.send(404, 'Not handled!');
+            return next(new restify.errors.ResourceNotFoundError('Not Handled', '"' + req.params.binding + '" is not defined by configuration'));
         }
         
-        var proxy = this.urlList[req.params.path];
-        overriders.save.folders(proxy, proxy.route);
+        var proxy = this.proxyList[req.params.binding];
+        overriders.save.folders(proxy, this.route);
         this.folder = folders[proxy.name];
         this.proxy(proxy, req, res, next)
             .then(function() {
-                console.log('resolved', arguments);
+                logger.info('resolved', JSON.stringify(arguments));
                 return next();
             })
             .fail(function(error) {
-                console.error(error);
+                logger.error(error);
                 return next(error);
             });
     },
     
     
     proxy: function(proxy, req, res, next) {
-        var url = proxy.url;
         var patterns = [ path.join(folders[proxy.name], '*.req') ];
         overriders.override.if.needed(patterns, proxy, this);
         return Q.allSettled(_.map(patterns, function(pattern) {
@@ -50,11 +60,12 @@ Api.prototype = {
                 fileList = _.chain(fileList).map(function(result) { return result.value; }).flatten().value();
                 this.find(fileList, req, res, next)
                     .then(function(file) {
-                        console.log('then', path.basename(file), 'found!');
+                        logger.info('then', path.basename(file), 'found!');
                         return Q.promise(function(resolve) { resolve(file); });
                     })
                     .fail(function() {
-                        console.log('fail', 'NOT found!');
+                        var url = this.createUrl(proxy.url, req);
+                        logger.info('fail', 'NOT found!', url);
                         return this.request(url, fileList, req, res, next);
                     }.bind(this));
             }.bind(this));
@@ -68,9 +79,9 @@ Api.prototype = {
                         reject(err);
                         return;
                     }
-                    equals(req.params, data)
+                    compare(req.params, data)
                         .then(function() {
-                            console.log('File', path.basename(file), 'found!');
+                            logger.info('File', path.basename(file), 'found!');
                             resolve(file);
                         })
                         .fail(function() {
@@ -85,7 +96,7 @@ Api.prototype = {
                     .filter(function(file) { return file.state === 'fulfilled'; })
                     .first();
                 result = chain.value().value;
-                console.log('found:', path.basename(result));
+                logger.info('found:', path.basename(result));
                 return Q.Promise(function(resolve, reject) {
                     //console.log('response found... reading files...');
                     Q.allSettled([
@@ -107,11 +118,29 @@ Api.prototype = {
             });
     },
     
+    createUrl: function(url, req) {
+        var query = _.chain(req.query)
+                .map(function(value, key) { return key + '=' + value; })
+                .value()
+            .join('&');
+        var lookup = {
+            search: '?' + query,
+            query: query,
+            path: req.url
+        };
+        _.extend(lookup, req.params);
+        return url.replace(/{{(\w+)}}/g, function(match, param) {
+            if (lookup.hasOwnProperty(param)) {
+                return lookup[param];
+            }
+            return match;
+        });
+    },
+    
     request: function(url, fileList, req, res, next) {
         return Q.Promise(function(resolve, reject) {
-            var apiUrl = url + req.url.replace(req.params.path + '/', '');
-            console.log('file not found, requesting from', apiUrl);
-            request(apiUrl, function(error, response, body) {
+            logger.info('file not found, requesting from', url);
+            request(url, function(error, response, body) {
                 if (error) {
                     reject(error);
                     return;
@@ -136,13 +165,13 @@ Api.prototype = {
     },
     
     save: function(params, res, body, count) {
-        console.log('saving response content', count, params);
+        logger.info('saving response content', count, params);
         return Q.allSettled([
             Q.Promise(function(resolve, reject) {
-                console.log('save to', path.join(this.folder, 'file_' + count + '.req'));
+                logger.info('save to', path.join(this.folder, 'file_' + count + '.req'));
                 fs.writeFile(path.join(this.folder, 'file_' + count + '.req'), JSON.stringify(params, null, 2), function(err) {
                     if (!err) {
-                        console.log('file_' + count + '.req saved!');
+                        logger.log('file_' + count + '.req saved!');
                         resolve();
                     } else {
                         reject(err);
@@ -150,7 +179,7 @@ Api.prototype = {
                 });
             }.bind(this)),
             Q.Promise(function(resolve, reject) {
-                console.log('save to', path.join(this.folder, 'file_' + count + '.stats'));
+                logger.info('save to', path.join(this.folder, 'file_' + count + '.stats'));
                 fs.writeFile(path.join(this.folder, 'file_' + count + '.stats'), JSON.stringify({
                     status: res.statusCode,
                     headers: res.headers
@@ -164,7 +193,7 @@ Api.prototype = {
                 });
             }.bind(this)),
             Q.Promise(function(resolve, reject) {
-                console.log('save to', path.join(this.folder, 'file_' + count + '.res'));
+                logger.info('save to', path.join(this.folder, 'file_' + count + '.res'));
                 fs.writeFile(path.join(this.folder, 'file_' + count + '.res'), body, function(err) {
                     if (!err) {
                         console.log('file_' + count + '.res saved!');

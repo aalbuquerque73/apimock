@@ -132,7 +132,7 @@ function Overrides() {
             if (_.all(tokens, function(token) {
                 var pair = token.split('=');
                 body[pair[0]] = pair[1];
-                return pair.length == 2;
+                return pair.length === 2;
             })) {
                 req.raw = req.body;
                 req.body = body;

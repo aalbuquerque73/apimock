@@ -19,8 +19,30 @@ describe('Folders', function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
-                { 'name': 'get', 'proxies': [ { 'name': 'doget', 'binding': 'doget', 'url': 'http://localhost', 'folder': 'doget' } ], 'paths': [ '/:path/:api' ], 'method': 'get', 'folder': 'get' },
-                { 'name': 'post', 'proxies': [ { 'name': 'dopost', 'binding': 'dopost', 'url': 'http://localhost', 'folder': 'dopost' } ], 'paths': [ '/:path' ], 'method': 'post', 'folder': 'post' }
+                {
+                    'name': 'get',
+                    'proxies': [{
+                        'name': 'doget',
+                        'binding': 'doget',
+                        'url': 'http://localhost',
+                        'folder': 'doget'
+                    }],
+                    'paths': ['/:path/:api'],
+                    'method': 'get',
+                    'folder': 'get'
+                },
+                {
+                    'name': 'post',
+                    'proxies': [{
+                        'name': 'dopost',
+                        'binding': 'dopost',
+                        'url': 'http://localhost',
+                        'folder': 'dopost'
+                    }],
+                    'paths': ['/:path'],
+                    'method': 'post',
+                    'folder': 'post'
+                }
             ]);
         sinon
             .stub(logger, 'log');
