@@ -119,6 +119,19 @@ Api.prototype = {
     },
     
     createUrl: function(url, req) {
+        // Ensure the url path is (REST) complete
+        url += _.chain(req.params)
+            .map(function(value, key) {
+                switch(key) {
+                    case 'key':
+                    case 'val':
+                        return '/' + value;
+                    default:
+                        return '';
+                }
+            })
+            .value().join('');
+
         var query = _.chain(req.query)
                 .map(function(value, key) { return key + '=' + value; })
                 .value()
@@ -126,8 +139,13 @@ Api.prototype = {
         var lookup = {
             search: '?' + query,
             query: query,
-            path: req.url
+            binding: req.url
         };
+
+        // Append the query string to the base url
+        url += lookup.search;
+
+        // Override default param values with those specified in the query string
         _.extend(lookup, req.params);
         return url.replace(/{{(\w+)}}/g, function(match, param) {
             if (lookup.hasOwnProperty(param)) {

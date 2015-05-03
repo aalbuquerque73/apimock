@@ -6,9 +6,19 @@
                     "binding": "date",
                     "url": "http://date.jsontest.com",
                     "folder": "date"
+                },
+                {
+                    "binding": "echo",
+                    "url": "http://echo.jsontest.com",
+                    "folder": "echo"
+                },
+                {
+                    "binding": "validate",
+                    "url": "http://validate.jsontest.com",
+                    "folder": "validate"
                 }
             ],
-            "paths": [ "/:path" ],
+            "paths": [ "/:binding", "/:binding/:key/:val" ],
             "method": "get",
             "folder": "jsontest"
         }
