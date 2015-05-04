@@ -180,7 +180,7 @@ __Configuration:__
             "proxies": [
                 {
                     "binding": "echo",
-                    "url": "http://echo.jsontest.com",
+                    "url": "http://echo.jsontest.com/{{key}}/{{val}}",
                     "folder": "echo"
                 }
             ],
@@ -241,7 +241,7 @@ __file_0.stats__
 
 __Endpoint:__  [http://validate.jsontest.com/?json={"key":"value"}](http://validate.jsontest.com/?json={"key":"value"}) 
 
-__Invocation:__ [http://localhost:8081/validate?json={"key":"value"}](http://localhost:8081/validate?json={"key":"value"}})
+__Invocation:__ [http://localhost:8081/validate?json={"key":"value"}](http://localhost:8081/validate?json={"key":"value"})
 
 __Response:__
 
@@ -264,7 +264,7 @@ __Configuration:__
             "proxies": [
                 {
                     "binding": "validate",
-                    "url": "http://validate.jsontest.com",
+                    "url": "http://validate.jsontest.com?{{query}}",
                     "folder": "validate"
                 }
             ],

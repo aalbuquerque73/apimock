@@ -9,12 +9,12 @@
                 },
                 {
                     "binding": "echo",
-                    "url": "http://echo.jsontest.com",
+                    "url": "http://echo.jsontest.com/{{key}}/{{val}}",
                     "folder": "echo"
                 },
                 {
                     "binding": "validate",
-                    "url": "http://validate.jsontest.com",
+                    "url": "http://validate.jsontest.com?{{query}}",
                     "folder": "validate"
                 }
             ],
