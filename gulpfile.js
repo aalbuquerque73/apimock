@@ -45,7 +45,7 @@ gulp.task('test', [ 'jshint' ], function() {
 });
 
 gulp.task('jshint', function() {
-    return gulp.src([ '**/*.js', '!node_modules/**', '!public/**', '!data/**', '!demo/**' ])
+    return gulp.src([ '**/*.js', '!**/node_modules/**', '!public/**', '!data/**', '!demo/**' ])
         .pipe(plumber(function(error) {
             // Output error message
             gutil.log(gutil.colors.red(['Error (', error.plugin, '): ', error.message].join('')));
