@@ -45,6 +45,9 @@ describe('API', function() {
     
     describe('API', function() {
         it('should setup get and post methods', function(done) {
+            // Doubled the default timeout
+            this.timeout(4000);
+            // This call takes time to complete
             api.setup(server);
             server.get.called.should.be.equal(true);
             server.post.called.should.be.equal(true);
