@@ -15,7 +15,7 @@ var logger = require('../logger'),
 describe('Folders', function() {
     var folders;
     
-    before(function(done) {
+    before(function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
@@ -60,7 +60,6 @@ describe('Folders', function() {
             .returns(true)
             .withArgs('/fake/data/post')
             .returns(true);
-        done();
     });
     
     after(function() {
