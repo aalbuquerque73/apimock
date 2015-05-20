@@ -16,7 +16,7 @@ Folders.prototype = {
         MQ.publish('main:folder', function(folder) {
             this.path = path.join(folder, this.base);
             _.each(config.get('routes'), function(route) {
-                var routeName = (route.name || route.folder || '') + '/';
+                var routeName = (route.name || route.folder || '') + path.sep;
                 this[routeName] = this.path;
                 if (route.folder) {
                     this[routeName] = path.join(this.path, route.folder);

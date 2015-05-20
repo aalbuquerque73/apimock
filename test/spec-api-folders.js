@@ -1,14 +1,20 @@
 // test message queue functionality
 /* global before, after, beforeEach, afterEach, describe, it */
 
+// dependency grouping
+    // API modules
 var logger = require('../logger'),
     MQ = require('../message-queue'),
-    
+
+    // Node modules
+    path = require('path'),
     mkdirp = require('mkdirp'),
     fs = require('fs'),
-    
+
+    // Config
     config = require('config'),
-    
+
+    // Test modules
     should = require('should'),
     sinon = require('sinon');
 
@@ -52,13 +58,13 @@ describe('Folders', function() {
             });
         sinon
             .stub(fs, 'existsSync')
-            .withArgs('/fake/data/get/doget')
+            .withArgs(path.normalize('/fake/data/get/doget'))
             .returns(false)
-            .withArgs('/fake/data/post/dopost')
+            .withArgs(path.normalize('/fake/data/post/dopost'))
             .returns(false)
-            .withArgs('/fake/data/get')
+            .withArgs(path.normalize('/fake/data/get'))
             .returns(true)
-            .withArgs('/fake/data/post')
+            .withArgs(path.normalize('/fake/data/post'))
             .returns(true);
         done();
     });
@@ -83,23 +89,23 @@ describe('Folders', function() {
     
     describe('Folders', function() {
         it('should get main folder', function() {
-            folders.path.should.be.equal('/fake/data');
+            folders.path.should.be.equal(path.normalize('/fake/data'));
         });
         
         it('should have a get/ property', function() {
-            folders.should.have.property('get/').and.be.equal('/fake/data/get');
+            folders.should.have.property(path.normalize('get/')).and.be.equal(path.normalize('/fake/data/get'));
         });
         
         it('should have a post/ property', function() {
-            folders.should.have.property('post/').and.be.equal('/fake/data/post');
+            folders.should.have.property(path.normalize('post/')).and.be.equal(path.normalize('/fake/data/post'));
         });
         
         it('should have a get/doget property', function() {
-            folders.should.have.property('get/doget').and.be.equal('/fake/data/get/doget');
+            folders.should.have.property(path.normalize('get/doget')).and.be.equal(path.normalize('/fake/data/get/doget'));
         });
         
         it('should have a post/dopost property', function() {
-            folders.should.have.property('post/dopost').and.be.equal('/fake/data/post/dopost');
+            folders.should.have.property(path.normalize('post/dopost')).and.be.equal(path.normalize('/fake/data/post/dopost'));
         });
         
         it('should have called mkdirp 2 times', function() {
