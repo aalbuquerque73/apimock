@@ -63,56 +63,47 @@ describe('Folders', function() {
         done();
     });
     
-    after(function(done) {
+    after(function() {
         config.get.restore();
         logger.log.restore();
         MQ.publish.restore();
-        done();
     });
     
-    beforeEach(function(done) {
+    beforeEach(function() {
         sinon
             .stub(mkdirp, 'sync', function(){});
         folders = require('../api/folders');
         folders.reset();
         folders.init();
-        done();
     });
     
-    afterEach(function(done) {
+    afterEach(function() {
         mkdirp.sync.restore();
-        done();
     });
     
     describe('Folders', function() {
-        it('should get main folder', function(done) {
+        it('should get main folder', function() {
             folders.path.should.be.equal('/fake/data');
-            done();
         });
         
-        it('should have a get/ property', function(done) {
+        it('should have a get/ property', function() {
             folders.should.have.property('get/').and.be.equal('/fake/data/get');
-            done();
         });
         
-        it('should have a post/ property', function(done) {
+        it('should have a post/ property', function() {
             folders.should.have.property('post/').and.be.equal('/fake/data/post');
-            done();
         });
         
-        it('should have a get/doget property', function(done) {
+        it('should have a get/doget property', function() {
             folders.should.have.property('get/doget').and.be.equal('/fake/data/get/doget');
-            done();
         });
         
-        it('should have a post/dopost property', function(done) {
+        it('should have a post/dopost property', function() {
             folders.should.have.property('post/dopost').and.be.equal('/fake/data/post/dopost');
-            done();
         });
         
-        it('should have called mkdirp 2 times', function(done) {
+        it('should have called mkdirp 2 times', function() {
             mkdirp.sync.calledTwice.should.be.equal(true);
-            done();
         });
     });
 });

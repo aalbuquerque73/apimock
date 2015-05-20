@@ -12,7 +12,7 @@ var Api = require('../api'),
 describe('API', function() {
     var api, server;
     
-    before(function(done) {
+    before(function() {
         sinon
             .stub(config, 'get')
             .withArgs('routes').returns([
@@ -25,30 +25,26 @@ describe('API', function() {
             });
         sinon
             .stub(logger, 'log');
-        done();
     });
     
-    after(function(done) {
+    after(function() {
         config.get.restore();
         logger.log.restore();
-        done();
     });
     
-    beforeEach(function(done) {
+    beforeEach(function() {
         api = new Api();
         server = {
             get: sinon.spy(),
             post: sinon.spy()
         };
-        done();
     });
     
     describe('API', function() {
-        it('should setup get and post methods', function(done) {
+        it('should setup get and post methods', function() {
             api.setup(server);
             server.get.called.should.be.equal(true);
             server.post.called.should.be.equal(true);
-            done();
         });
     });
 });

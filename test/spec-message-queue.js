@@ -14,24 +14,22 @@ describe('MessageQueue', function() {
     });
     
     describe('dispose', function() {
-        it('subscribe should return a disposable', function(done) {
+        it('subscribe should return a disposable', function() {
            var subscription = MQ.subscribe('test', function() {});
             should(subscription).have.property('dispose'); 
             should(subscription.dispose).be.type('function');
-            done();
         });
     });
     
     describe('subscribe/publish', function() {
-        it('subscribe should run when publishing', function(done) {
+        it('subscribe should run when publishing', function() {
             var called = false;
             var subscription = MQ.subscribe('test', function() { called = true; });
             MQ.publish('test');
             should(called).equal(true);
-            done();
         });
         
-        it('subscribe should be called with argument', function(done) {
+        it('subscribe should be called with argument', function() {
             var calledWith = null;
             var subscription = MQ.subscribe('test', function(data) { calledWith = data; });
             MQ.publish('test', 'test1');
@@ -40,16 +38,14 @@ describe('MessageQueue', function() {
             should(calledWith).equal('test2');
             MQ.publish('test');
             should(calledWith).equal(undefined);
-            done();
         });
         
-        it('subscribeOnce should run only once', function(done) {
+        it('subscribeOnce should run only once', function() {
             var calls = 0;
             var subscription = MQ.subscribeOnce('test', function() { ++calls; });
             MQ.publish('test');
             MQ.publish('test');
             should(calls).equal(1);
-            done();
         });
     });
 });
