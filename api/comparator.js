@@ -23,7 +23,7 @@ var filters = [
     function (data) { return data.replace(/&rx;(.*?)&rx;/g, function (match, param) {return param.replace(/\\(?!\\)/g, ''); }); }
 ];
 
-function equals(obj1, obj2) {
+function compare(obj1, obj2) {
     obj1 = parse(obj1);
     obj2 = parse(obj2);
     var tp1 = typeof obj1, tp2 = typeof obj2;
@@ -57,7 +57,7 @@ function equals(obj1, obj2) {
             }
             var tp1 = typeof obj1[item], tp2 = typeof obj2[item];
             if (tp1 === tp2 && tp1 === 'object') {
-                return equals(obj1[item], obj2[item]);
+                return compare(obj1[item], obj2[item]);
             }
             if (obj1[item].match(_.reduce(filters, function(val, cb) { return cb(val); }, obj2[item]))) {
                 return Q.Promise(function(resolve) { return resolve(true); });
@@ -68,5 +68,5 @@ function equals(obj1, obj2) {
     return Q.Promise(function(resolve) { return resolve(true); });
 }
 
-module.exports = equals;
+module.exports = compare;
 module.exports.parse = parse;
