@@ -1,0 +1,6 @@
+{
+    "verbose": false,
+    "ignore": [ "logs/*", "data/*", "public/*", "demo/*", "node_modules/*", ".git/*" ],
+    "watch": [ "*" ],
+    "ext": ["js", "json"]
+}

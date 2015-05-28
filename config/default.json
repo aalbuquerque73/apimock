@@ -1,128 +1,26 @@
 {
-    "app": {
-        "views": {
-            "engine": "jade",
-            "folder": "views"
-        },
-        "public": {
-            "folder": "public"
-        },
-        "favicon": {
-            "folder": ""
-        }
-    },
-	"Server": {
-		"host": "localhost",
-		"port": 8081
-	},
-	
-	"Options": {
-        "logging": "dev",
-		"debug": {
-			"level": "warn"
-		}
-	},
-
-	"Routes": [
+    "routes": [
         {
-            "target": "/api",
-            "router": "js/api/proxy/simple",
-            "config": "proxy"
-        },
-        {
-            "target": "/api/domain",
-            "router": "js/api/domain",
-            "config": "domain"
-        },
-        {
-            "target": "/api/events",
-            "router": "js/api/events",
-            "config": "events"
-        }
-	],
-	
-    "Configs": {
-        "proxy": {
-            "scenario": "",
-            "methods": {
-                "get": [ "get-test" ],
-                "post": [ "post-test" ]
-            },
-            "options": {
-                "debug": {
-                    "found": false,
-                    "not": {
-                        "found": false
-                    },
-                    "saving": false
-                }
-            },
-            "api": {
-                "get-test": {
-                    "source": "proxy/get",
-                    "href": "http://myapp.com/api?",
-                    "extension": ".xml",
-                    "type": "text/xml",
-                    "scenarios": {
-                        "active": "",
-                        "other": {
-                            "source": "proxy/other-get"
-                        },
-                        "debug": {
-                            "source": "proxy/debug/get",
-                            "href": "http://myapp.com/api?debug=true&"
-                        }
-                    },
-                    "options": {
-                        "debug": {
-                            "found": false,
-                            "not": {
-                                "found": true
-                            },
-                            "saving": true
-                        }
-                    }
+            "proxies": [
+                {
+                    "binding": "date",
+                    "url": "http://date.jsontest.com",
+                    "folder": "date"
                 },
-                "post-test": {
-                    "source": "proxy/post",
-                    "href": "http://http://myapp.com/api/post?",
-                    "matchFilter": [
-                        "escape",
-                        "regexp"
-                    ],
-                    "filter": [
-                        "newline",
-                        "xml.all"
-                    ],
-                    "scenarios": {
-                        "active": "",
-                        "other": {
-                            "source": "proxy/post/other"
-                        },
-                        "debug": {
-                            "source": "proxy/debug/post",
-                            "href": "http://myapp.com/api/post?debug=true&"
-                        }
-                    },
-                    "options": {
-                        "debug": {
-                            "found": true,
-                            "not": {
-                                "found": true
-                            },
-                            "saving": true
-                        }
-                    }
+                {
+                    "binding": "echo",
+                    "url": "http://echo.jsontest.com/{{key}}/{{val}}",
+                    "folder": "echo"
+                },
+                {
+                    "binding": "validate",
+                    "url": "http://validate.jsontest.com?{{query}}",
+                    "folder": "validate"
                 }
-            }
-        },
-
-        "domain": {
-            "methods": {
-                "get": [ "config" ]
-            },
-            "api": {
-            }
+            ],
+            "paths": [ "/:binding", "/:binding/:key/:val" ],
+            "method": "get",
+            "folder": "jsontest"
         }
-    }
-} 
+    ]
+}
