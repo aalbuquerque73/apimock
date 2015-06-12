@@ -11,6 +11,7 @@ var _ = require('underscore'),
     restify = require('restify'),
     
     overriders = require('./overriders'),
+    utils = require('./utils'),
     
     folders = require('./folders'),
     compare = require('./comparator');
@@ -92,7 +93,7 @@ Api.prototype = {
                         return Q.promise(function(resolve) { resolve(file); });
                     })
                     .fail(function() {
-                        var url = this.createUrl(proxy.url, req);
+                        var url = utils.createUrl(proxy.url, req);
                         logger.info('fail', 'NOT found!');
                         return this.request(url, fileList, req, res, next);
                     }.bind(this));
@@ -149,25 +150,6 @@ Api.prototype = {
                         .fail(reject);
                     });
                 });
-        });
-    },
-    
-    createUrl: function(url, req) {
-        var query = _.chain(req.query)
-                .map(function(value, key) { return key + '=' + value; })
-                .value()
-            .join('&');
-        var lookup = {
-            search: '?' + query,
-            query: query,
-            path: req.url
-        };
-        _.extend(lookup, req.params);
-        return url.replace(/{{(\w+)}}/g, function(match, param) {
-            if (lookup.hasOwnProperty(param)) {
-                return lookup[param];
-            }
-            return match;
         });
     },
     
