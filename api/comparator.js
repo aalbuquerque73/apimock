@@ -59,7 +59,9 @@ function compare(obj1, obj2) {
             if (tp1 === tp2 && tp1 === 'object') {
                 return compare(obj1[item], obj2[item]);
             }
-            if (obj1[item].match(_.reduce(filters, function(val, cb) { return cb(val); }, obj2[item]))) {
+            var filter = _.reduce(filters, function(val, cb) { return cb(val); }, obj2[item]);
+            var match = obj1[item].match(filter);
+            if (match && match[0] === match.input) {
                 return Q.Promise(function(resolve) { return resolve(true); });
             }
             return Q.Promise(function(resolve, reject) { return reject(false); }); 

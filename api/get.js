@@ -39,6 +39,7 @@ Api.prototype = {
         var proxy = this.proxyList[req.params.binding];
         overriders.save.folders(proxy, this.route);
         this.folder = folders[proxy.name];
+        logger.info('request:', req.url);
         this.proxy(proxy, req, res, next)
             .then(function() {
                 logger.info('resolved', JSON.stringify(arguments));

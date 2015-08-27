@@ -180,7 +180,7 @@ Api.prototype = {
                     
                     Q.allSettled(calls)
                         .then(function(params) {
-                            return this.save(params[0].value, response, params[1].value, fileList.length)
+                            return this.save(params[0].value, response, params[1].value, fileList.length, rbody)
                             .then(function(files) {
                                 res.status(response.statusCode);
                                 _.each(response.headers, function(value, key) {
@@ -200,12 +200,24 @@ Api.prototype = {
         }.bind(this));
     },
     
-    save: function(params, res, body, count) {
+    save: function(params, res, body, count, rbody) {
         return Q.allSettled([
             Q.Promise(function(resolve, reject) {
                 var file = path.join(this.folder, 'file_' + count + '.req');
                 logger.info('save to', file);
                 fs.writeFile(file, params, function(err) {
+                    if (!err) {
+                        logger.info('file_' + count + '.req saved!');
+                        resolve(file);
+                    } else {
+                        reject(err);
+                    }
+                });
+            }.bind(this)),
+            Q.Promise(function(resolve, reject) {
+                var file = path.join(this.folder, 'file_' + count + '.org');
+                logger.info('save to', file);
+                fs.writeFile(file, rbody, function(err) {
                     if (!err) {
                         logger.info('file_' + count + '.req saved!');
                         resolve(file);

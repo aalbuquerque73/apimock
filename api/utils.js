@@ -33,6 +33,7 @@ module.exports = {
             query: query,
             path: req.url
         };
+        _.extend(lookup, req.query);
         _.extend(lookup, req.params);
         
         var transform = {};

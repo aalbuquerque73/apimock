@@ -53,6 +53,12 @@ var promiseList = _.chain(list)
                         if (data.hasOwnProperty(item)) {
                             ++have[1];
                         }
+                        var tokens = item.split('=');
+                        if (tokens.length > 1) {
+                            if (data.hasOwnProperty(tokens[0]) && data[tokens[0]] === tokens[1]) {
+                                ++have[1];
+                            }
+                        }
                     });
                 }
                 if (expected[0] === have[0] && expected[1] === have[1]) {
@@ -84,10 +90,11 @@ Q.allSettled(promiseList)
                     }); 
                 });
             });
-    var err = _.chain(list)
-        .filter(function(item) { return item.state === 'rejected'; })
-        .map(function(item) { return item.reason; })
-        .value();
-    
-    console.log(err);
+        
+        //var err = _.chain(list)
+        //    .filter(function(item) { return item.state === 'rejected'; })
+        //    .map(function(item) { return item.reason; })
+        //    .value();
+        //
+        //console.log(err);
     });
