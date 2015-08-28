@@ -6,19 +6,17 @@ var debug = require('debug'),
     path = require('path'),
     glob = require('glob');
 
-var log = debug('rename/logs'),
-    info = debug('rename/info'),
-    warn = debug('rename/warnnings'),
-    error = debug('rename/errors');
-
 var options = {
     string: [ 'm', 'f', 'p', 's' ],
-    boolean: [ 'v' ],
+    boolean: [ 'v', 'V', 'P', 'l' ],
     default: {
-        f: '',
+        f: null,
         m: '{{*}}',
         p: '',
-        s: '_'
+        s: '_',
+        v: false,
+        V: false,
+        l: false
     },
     alias: {
         v: 'verbose',
@@ -30,6 +28,25 @@ var options = {
 };
 var argv = minimist(process.argv.slice(2), options);
 
+debug.enable('rename/errors');
+if (argv.v || argv.P || argv.V) {
+    debug.enable('rename/info');
+    debug.enable('rename/warnings');
+    if (argv.P) {
+        debug.enable('rename/promise');
+    }
+    if (argv.V) {
+        debug.enable('rename/logs');
+        debug.enable('rename/promise');
+    }
+}
+
+var log = debug('rename/logs'),
+    plog = debug('rename/promise'),
+    info = debug('rename/info'),
+    warn = debug('rename/warnnings'),
+    error = debug('rename/errors');
+
 var list = glob.sync(path.join(argv.path, '*.req'));
 info('Proccessing ' + list.length + ' files');
 
@@ -39,29 +56,33 @@ var promiseList = _.chain(list)
             log('checking file', item);
             fs.readFile(path.join(__dirname, item), { encoding: 'utf8' }, function(err, text) {
                 if (err) {
+                    plog('reject file ' + item, err);
                     reject(err);
                     return;
                 }
                 var data = JSON.parse(text);
-                var filter = argv.f.split(',');
+                var filter = [];
+                if (argv.f) {
+                    argv.f.split(',');
+                }
                 var test = _.all(filter, function(filter) {
                     var tokens = filter.split('=');
                     log(filter, tokens);
                     var vars = tokens[0].split('|');
-                    return _.all(vars, function(key) {
+                    return _.any(vars, function(key) {
                         if (data.hasOwnProperty(key)) {
                             return data[key].match(tokens[1]);
                         }
-                        return true;
+                        return false;
                     });
                 });
                 if (test) {
                     var first = true;
-                    var line = argv.m.replace(/{{([\w\d|]+)}}/g, function(match, variable) {
-                        var tokens = variable.split('|');
+                    var line = argv.m.replace(/{{([\w\d,]+)}}/g, function(match, variable) {
+                        var tokens = variable.split(',');
                         var sep = first ? '' : argv.s;
                         first = false;
-                        log(match, variable, tokens);
+                        log('match', match, variable, tokens);
                         for (var i = 0; i < tokens.length; ++i) {
                             if (data.hasOwnProperty(tokens[i])) {
                                 var param = data[tokens[i]];
@@ -76,10 +97,12 @@ var promiseList = _.chain(list)
                         return sep + Object.keys(data).map(function(key) { return data[key]; }).join(argv.s);
                     });
                     log('testing', data, line, filter, test);
+                    plog('resolve file ' + item, line);
                     resolve({ old: item, 'new': path.join(path.dirname(item), line) });
                 } else {
                     log('testing', data, filter, test);
-                    reject('filter out ' + item);
+                    plog('reject file ' + item, 'Filtered out');
+                    reject('filtered out ' + item);
                 }
             });
         });
@@ -88,6 +111,10 @@ var promiseList = _.chain(list)
 
 Q.allSettled(promiseList)
     .then(function(list) {
+        info('Renaming ' + _.chain(list)
+            .filter(function(item) { return item.state === 'fulfilled' && item.value; })
+            .map(function(item) { return item.value; })
+             .value().length + ' files');
         _.chain(list)
             .filter(function(item) { return item.state === 'fulfilled' && item.value; })
             .map(function(item) { return item.value; })
