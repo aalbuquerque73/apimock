@@ -131,7 +131,7 @@ Q.allSettled(promiseList)
                                 error(err);
                                 return;
                             }
-                            info('file renamed', files);
+                            info('file renamed', path.basename(files.old).replace(/req$/, ext), path.basename(files.new) + '.' + ext);
                         }); 
                     });
                 }
