@@ -22,6 +22,7 @@
     "events": "node rename -m '{{template}}_{{event}}'"
   },
   "dependencies": {
+    "debug": "^2.2.0",
     "glob": "^5.0.3",
     "minimist": "^1.1.1",
     "q": "^1.2.0",
