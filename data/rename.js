@@ -60,6 +60,7 @@ var promiseList = _.chain(list)
                     reject(err);
                     return;
                 }
+                log('Checking file ' + item, text);
                 var data = JSON.parse(text);
                 var filter = [];
                 if (argv.f) {
