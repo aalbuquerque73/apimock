@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/aalbuquerque73/apimock",
   "scripts": {
-    "events": "node rename -m '{{template}}_{{event}}'"
+    "start": "./node_modules/.bin/nodemon -e req --ignore node_modules rename -p oxipub/pub -m '{{api,template}}{{class,event}}{{*}}{{output}}'",
+    "rename": "node rename -p oxipub/pub -m '{{api,template}}{{class,event}}{{*}}{{output}}'"
   },
   "dependencies": {
     "debug": "^2.2.0",
@@ -28,7 +29,8 @@
     "q": "^1.2.0",
     "underscore": "^1.8.3"
   },
-  "optionalDependencies": {},
-  "devDependencies": {},
+  "devDependencies": {
+    "nodemon": "^1.4.1"
+  },
   "description": "rename"
 }
