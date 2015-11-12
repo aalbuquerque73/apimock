@@ -33,29 +33,64 @@ var logger = new winston.Logger({
     exitOnError: false
 });
 
-//module.exports = logger;
-module.exports.stream = {
-    write: function (message, encoding) {
-        logger.info(message);
+var webLogger = new winston.Logger({
+    transports: [
+        new winston.transports.Console({
+            level: 'debug',
+            handleExceptions: true,
+            json: false,
+            colorize: true
+        })
+    ]
+});
+
+//Logger;
+module.exports = {
+    stream: {
+        write: function (message, encoding) {
+            logger.info(message);
+        }
+    },
+    
+    log: function() {
+        var args = Array.prototype.slice.call(arguments);
+        logger.log('verbose', args.join(' '));
+    },
+    info: function() {
+        var args = Array.prototype.slice.call(arguments);
+        logger.log('info', args.join(' '));
+    },
+    warn: function() {
+        var args = Array.prototype.slice.call(arguments);
+        logger.log('warn', args.join(' '));
+    },
+    error: function() {
+        var args = Array.prototype.slice.call(arguments);
+        logger.log('error', args.join(' '));
+    },
+    
+    web: {
+        stream: {
+            write: function (message, encoding) {
+                webLogger.info(message);
+            }
+        },
+
+        log: function() {
+            var args = Array.prototype.slice.call(arguments);
+            webLogger.log('verbose', args.join(' '));
+        },
+        info: function() {
+            var args = Array.prototype.slice.call(arguments);
+            webLogger.log('info', args.join(' '));
+        },
+        warn: function() {
+            var args = Array.prototype.slice.call(arguments);
+            webLogger.log('warn', args.join(' '));
+        },
+        error: function() {
+            var args = Array.prototype.slice.call(arguments);
+            webLogger.log('error', args.join(' '));
+        }
     }
-};
-
-module.exports.log = function() {
-    var args = Array.prototype.slice.call(arguments);
-    logger.log('verbose', args.join(' '));
-};
-
-module.exports.info = function() {
-    var args = Array.prototype.slice.call(arguments);
-    logger.log('info', args.join(' '));
-};
-
-module.exports.warn = function() {
-    var args = Array.prototype.slice.call(arguments);
-    logger.log('warn', args.join(' '));
-};
-
-module.exports.error = function() {
-    var args = Array.prototype.slice.call(arguments);
-    logger.log('error', args.join(' '));
 };

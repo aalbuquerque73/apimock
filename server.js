@@ -1,4 +1,5 @@
 var path = require('path'),
+    express = require('express'),
     restify = require('restify'),
     favicon = require('serve-favicon'),
     logger = require('./logger'),
@@ -55,3 +56,19 @@ if (config.server && config.server.port) {
 server.listen(port, function() {
     logger.log(server.name, 'listening at', server.url);
 });
+
+if (config.web && config.web.port) {
+    var app = express();
+    
+    app.use(morgan('dev', {
+        skip: function(req, res) { return res.statusCode < 400; },
+        stream: logger.web.stream
+    }));
+    app.use(express.static(path.join(__dirname, 'public')));
+    
+    var webServer = app.listen(config.web.port, function() {
+        var host = webServer.address().address;
+        var port = webServer.address().port;
+        logger.web.log(config.web.name || server.name, 'listening at', 'http://[' + host + ']:', port);
+    });
+}
